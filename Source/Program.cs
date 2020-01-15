@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Rendering;
 
 namespace Source
 {
@@ -10,6 +9,12 @@ namespace Source
 	{
 		static void Main( string[] args )
 		{
+			// Render console window
+			RenderWindow renderObj = new RenderWindow(13,3);
+
+			renderObj.RenderLoop();
+
+			Console.ReadLine();
 		}
 	}
 }
