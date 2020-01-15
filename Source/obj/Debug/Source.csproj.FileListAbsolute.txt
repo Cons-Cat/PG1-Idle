@@ -1,6 +1,6 @@
+E:\PG1-Idle\Source\obj\Debug\Source.csprojAssemblyReference.cache
 E:\PG1-Idle\Source\bin\Debug\Source.exe.config
 E:\PG1-Idle\Source\bin\Debug\Source.exe
 E:\PG1-Idle\Source\bin\Debug\Source.pdb
-E:\PG1-Idle\Source\obj\Debug\Source.csprojAssemblyReference.cache
 E:\PG1-Idle\Source\obj\Debug\Source.exe
 E:\PG1-Idle\Source\obj\Debug\Source.pdb

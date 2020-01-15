@@ -8,80 +8,141 @@ namespace Rendering
 	{
 		// Initialize variables
 		int[] columnWidth;
-		int columnCount;
-		int rowCount;
-		int points;
-		string[,] gridStrings;
+		uint columnCount;
+		uint rowCount;
+		uint points;
+
+		string[,] gridString;
+		bool[,] gridHasVal;
+		uint[,] gridValue;
+		ConsoleColor[,] gridCol;
 
 		// Constructor
-		public RenderWindow(int argRows, int argColumns) {
-			// Variable values:
-			rowCount = argRows + 1;
+		public RenderWindow(uint argRows, uint argColumns) {
+            // Variable values:
+            #region
+
+            rowCount = argRows + 1;
 			columnCount = argColumns+1;
 
-			columnWidth = new int[columnCount];
+            #endregion
 
-			for (int i = 0; i < columnCount; i++)
+            // Declare arrays:
+            #region
+
+            columnWidth = new int[columnCount];
+
+			for (uint i = 0; i < columnCount; i++)
 			{
-				columnWidth[i] = 20;
+				columnWidth[i] = 25;
 			}
 
-			gridStrings = new string[rowCount, columnCount];
-			
-			// Hardcoded values:
-			columnWidth[1] = 40;
+			gridString = new string[rowCount, columnCount];
+			gridHasVal = new bool[rowCount, columnCount];
+			gridValue = new uint[rowCount, columnCount];
+			gridCol = new ConsoleColor[rowCount, columnCount];
+
+            #endregion
+
+            // Hardcoded values:
+            #region
+
+            columnWidth[0] = 8;
+			columnWidth[1] = 32;
 
 			points = 0;
 
-			// Dummy data:
-			for (int i = 0; i < rowCount; i++)
+            #endregion
+
+            // Dummy data:
+            for (uint i = 0; i < rowCount; i++)
 			{
-				for (int j = 0; j < columnCount; j++)
+				for (uint j = 0; j < columnCount; j++)
 				{
 					// Default to blank grid.
-					gridStrings[i, j] = "";
+					gridString[i, j] = "";
+					gridHasVal[i, j] = false;
 
-					// Write leftmost column.
-					if (i == rowCount / 2 - 1 && j == 1)
+                    // Write leftmost column.
+                    #region
+
+                    if (j == 1)
 					{
-						gridStrings[i, j] = "Points: " +  points.ToString();
-					}
-					if (i == rowCount / 2 && j == 1)
-					{
-						gridStrings[i, j] = "Press W";
-					}
-					if (i == rowCount / 2 + 1 && j == 1)
-					{
-						gridStrings[i, j] = "Press Shift";
+						// Center these rows relative to the agents' rows.
+						if (i == rowCount / 2 - 1)
+						{
+							gridHasVal[i, j] = true;
+							gridValue[i, j] = points;
+							gridCol[i, j] = ConsoleColor.Magenta;
+
+							gridString[i, j] = "Points: ";
+						}
+
+						if (i == rowCount / 2)
+						{
+							gridString[i, j] = "Press W";
+						}
+
+						if (i == rowCount / 2 + 1)
+						{
+							gridString[i, j] = "Press Shift";
+						}
 					}
 
-					// Write agents column.
-					if (j == 2)
+                    #endregion
+
+                    // Write agents column.
+                    #region
+
+                    if (j == 2)
 					{
-						gridStrings[i, j] = "Agent: " + i.ToString();
+						gridHasVal[i, j] = true;
+						gridValue[i, j] = i;
+						gridCol[i, j] = ConsoleColor.Cyan;
+
+						gridString[i, j] = "Agent: ";
 					}
 
 					// Write agents price column.
 					if (j == 3)
 					{
-						gridStrings[i, j] = "Price: " + ((double)i * 2.5).ToString();
+						gridHasVal[i, j] = true;
+						gridValue[i, j] = (uint)(Convert.ToDouble(i) * 2.5);
+						gridCol[i, j] = ConsoleColor.DarkCyan;
+
+						gridString[i, j] = "Price: ";
 					}
-				}
-			}
+
+                    #endregion
+                }
+            }
 		}
 
 		public void RenderLoop()
 		{
 			string tempStr;
 
-			for (int rowIterate = 0; rowIterate < rowCount; rowIterate++)
+			for (uint rowIterate = 0; rowIterate < rowCount; rowIterate++)
 			{
 				// Write next column.
-				for (int columnIterate = 0; columnIterate < columnCount; columnIterate++)
+				for (uint columnIterate = 0; columnIterate < columnCount; columnIterate++)
 				{
-					tempStr = gridStrings[rowIterate, columnIterate];
+					tempStr = gridString[rowIterate, columnIterate];
+					
+					if (gridHasVal[rowIterate, columnIterate])
+					{
+						// Colorize the grid's value
+						Console.Write(tempStr);
 
-					Console.Write(tempStr.PadRight(columnWidth[columnIterate], ' '));
+						Console.ForegroundColor = gridCol[rowIterate, columnIterate];
+						Console.Write(gridValue[rowIterate, columnIterate].ToString().PadRight(columnWidth[columnIterate], ' '));
+						Console.ForegroundColor = ConsoleColor.White; // Reset color
+					}
+					else
+					{
+						// Write a grid without a value
+						Console.Write(tempStr.PadRight(columnWidth[columnIterate], ' '));
+					}
 				}
 
 				// Write next row.

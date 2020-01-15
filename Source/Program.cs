@@ -10,7 +10,7 @@ namespace Source
 		static void Main( string[] args )
 		{
 			// Render console window
-			RenderWindow renderObj = new RenderWindow(13,3);
+			RenderWindow renderObj = new RenderWindow(9,3);
 
 			renderObj.RenderLoop();
 
