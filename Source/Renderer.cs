@@ -103,8 +103,12 @@ namespace Rendering
 						gridString[i, j] = "Agent: ";
 					}
 
-					// Write agents price column.
-					if (j == 3)
+                    #endregion
+
+                    // Write agents price column.
+                    #region
+
+                    if (j == 3)
 					{
 						gridHasVal[i, j] = true;
 						gridValue[i, j] = (uint)(Convert.ToDouble(i) * 2.5);
@@ -122,9 +126,10 @@ namespace Rendering
 		{
 			string tempStr;
 
+			// Write each row.
 			for (uint rowIterate = 0; rowIterate < rowCount; rowIterate++)
 			{
-				// Write next column.
+				// Write each column of this row.
 				for (uint columnIterate = 0; columnIterate < columnCount; columnIterate++)
 				{
 					tempStr = gridString[rowIterate, columnIterate];
@@ -135,7 +140,7 @@ namespace Rendering
 						Console.Write(tempStr);
 
 						Console.ForegroundColor = gridCol[rowIterate, columnIterate];
-						Console.Write(gridValue[rowIterate, columnIterate].ToString().PadRight(columnWidth[columnIterate], ' '));
+						Console.Write(gridValue[rowIterate, columnIterate].ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
 						Console.ForegroundColor = ConsoleColor.White; // Reset color
 					}
 					else
@@ -145,7 +150,7 @@ namespace Rendering
 					}
 				}
 
-				// Write next row.
+				// Shift to next row.
 				Console.WriteLine();
 			}
 		}
