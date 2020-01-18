@@ -2,27 +2,43 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Rendering
+namespace Source
 {
+	enum RenderGridTypes
+	{
+		GridEmpty,
+		GridString,
+		GridPoints,
+		GridAgents,
+		GridPrice
+	}
+
 	class RenderWindow
 	{
 		// Initialize variables
 		int[] columnWidth;
 		uint columnCount;
 		uint rowCount;
-		uint points;
+		public static double displayPoints { get; set; }
 
 		string[,] gridString;
-		bool[,] gridHasVal;
 		uint[,] gridValue;
+		bool[,] gridHasVal;
+		bool[,] gridIsStatic;
+
+		RenderGridTypes[,] gridType;
 		ConsoleColor[,] gridCol;
+
+		// Passed in by Main()
+		public static uint[] agentCount;
+		public static uint[] agentPrice;
 
 		// Constructor
 		public RenderWindow(uint argRows, uint argColumns) {
-            // Variable values:
-            #region
+			// Variable values:
+			#region
 
-            rowCount = argRows + 1;
+			rowCount = argRows + 1;
 			columnCount = argColumns+1;
 
             #endregion
@@ -38,8 +54,12 @@ namespace Rendering
 			}
 
 			gridString = new string[rowCount, columnCount];
-			gridHasVal = new bool[rowCount, columnCount];
 			gridValue = new uint[rowCount, columnCount];
+			agentCount = new uint[10];
+			agentPrice = new uint[10];
+			gridHasVal = new bool[rowCount, columnCount];
+			gridIsStatic = new bool[rowCount, columnCount];
+			gridType = new RenderGridTypes[rowCount, columnCount];
 			gridCol = new ConsoleColor[rowCount, columnCount];
 
             #endregion
@@ -50,41 +70,43 @@ namespace Rendering
             columnWidth[0] = 8;
 			columnWidth[1] = 32;
 
-			points = 0;
-
-            #endregion
-
-            // Dummy data:
             for (uint i = 0; i < rowCount; i++)
 			{
 				for (uint j = 0; j < columnCount; j++)
 				{
 					// Default to blank grid.
 					gridString[i, j] = "";
-					gridHasVal[i, j] = false;
+					gridType[i, j] = RenderGridTypes.GridEmpty;
 
-                    // Write leftmost column.
-                    #region
+					// Write info
+					#region
 
-                    if (j == 1)
+					if (j == 0 && i == 0)
+					{
+						gridType[i,j] = RenderGridTypes.GridString;
+						gridString[i, j] = "Exit: X";
+					}
+
+					#endregion
+					// Write leftmost column.
+					#region
+
+					if (j == 1)
 					{
 						// Center these rows relative to the agents' rows.
 						if (i == rowCount / 2 - 1)
 						{
-							gridHasVal[i, j] = true;
-							gridValue[i, j] = points;
-							gridCol[i, j] = ConsoleColor.Magenta;
-
+							gridType[i,j] = RenderGridTypes.GridPoints;
 							gridString[i, j] = "Points: ";
 						}
-
-						if (i == rowCount / 2)
+						else if (i == rowCount / 2)
 						{
-							gridString[i, j] = "Press W";
+							gridType[i, j] = RenderGridTypes.GridString;
+							gridString[i, j] = "Press Spacebar";
 						}
-
-						if (i == rowCount / 2 + 1)
+						else if (i == rowCount / 2 + 1)
 						{
+							gridType[i, j] = RenderGridTypes.GridString;
 							gridString[i, j] = "Press Shift";
 						}
 					}
@@ -96,11 +118,8 @@ namespace Rendering
 
                     if (j == 2)
 					{
-						gridHasVal[i, j] = true;
-						gridValue[i, j] = i;
-						gridCol[i, j] = ConsoleColor.Cyan;
-
-						gridString[i, j] = "Agent: ";
+						gridString[i, j] = "Agent " + ((i + 1) % 10).ToString() + ": ";
+						gridType[i, j] = RenderGridTypes.GridAgents;
 					}
 
                     #endregion
@@ -110,21 +129,23 @@ namespace Rendering
 
                     if (j == 3)
 					{
-						gridHasVal[i, j] = true;
-						gridValue[i, j] = (uint)(Convert.ToDouble(i) * 2.5);
-						gridCol[i, j] = ConsoleColor.DarkCyan;
-
 						gridString[i, j] = "Price: ";
+						gridType[i, j] = RenderGridTypes.GridPrice;
 					}
 
                     #endregion
                 }
             }
-		}
 
-		public void RenderLoop()
+            #endregion
+        }
+
+        public void RenderLoop()
 		{
 			string tempStr;
+
+			// Refresh the console;
+			Console.Clear();
 
 			// Write each row.
 			for (uint rowIterate = 0; rowIterate < rowCount; rowIterate++)
@@ -133,21 +154,41 @@ namespace Rendering
 				for (uint columnIterate = 0; columnIterate < columnCount; columnIterate++)
 				{
 					tempStr = gridString[rowIterate, columnIterate];
-					
-					if (gridHasVal[rowIterate, columnIterate])
-					{
-						// Colorize the grid's value
-						Console.Write(tempStr);
 
-						Console.ForegroundColor = gridCol[rowIterate, columnIterate];
-						Console.Write(gridValue[rowIterate, columnIterate].ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
-						Console.ForegroundColor = ConsoleColor.White; // Reset color
-					}
-					else
+					switch (gridType[rowIterate,columnIterate])
 					{
-						// Write a grid without a value
-						Console.Write(tempStr.PadRight(columnWidth[columnIterate], ' '));
+						case RenderGridTypes.GridEmpty:
+							Console.Write(gridString[rowIterate, columnIterate].PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+							break;
+						case RenderGridTypes.GridPoints:
+							Console.Write(tempStr);
+
+							Console.ForegroundColor = ConsoleColor.Magenta;
+							Console.Write(((uint)displayPoints).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+
+							break;
+						case RenderGridTypes.GridString:
+							Console.Write(gridString[rowIterate, columnIterate].PadRight(columnWidth[columnIterate], ' '));
+
+							break;
+						case RenderGridTypes.GridAgents:
+							Console.Write(tempStr);
+
+							Console.ForegroundColor = ConsoleColor.DarkGray;
+							Console.Write((agentCount[rowIterate]).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+
+							break;
+						case RenderGridTypes.GridPrice:
+							Console.ForegroundColor = ConsoleColor.White; // Reset color
+							Console.Write(tempStr);
+
+							Console.ForegroundColor = ConsoleColor.DarkGray;
+							Console.Write((agentPrice[rowIterate]).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+
+							break;
 					}
+
+					Console.ForegroundColor = ConsoleColor.White; // Reset color
 				}
 
 				// Shift to next row.

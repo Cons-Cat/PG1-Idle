@@ -1,6 +1,6 @@
-C:\Users\joeyb\Documents\GitHub\PG1-Idle\Source\bin\Debug\Source.exe.config
-C:\Users\joeyb\Documents\GitHub\PG1-Idle\Source\bin\Debug\Source.exe
-C:\Users\joeyb\Documents\GitHub\PG1-Idle\Source\bin\Debug\Source.pdb
-C:\Users\joeyb\Documents\GitHub\PG1-Idle\Source\obj\Debug\Source.csprojAssemblyReference.cache
-C:\Users\joeyb\Documents\GitHub\PG1-Idle\Source\obj\Debug\Source.exe
-C:\Users\joeyb\Documents\GitHub\PG1-Idle\Source\obj\Debug\Source.pdb
+E:\PG1-Idle\Source\bin\Debug\Source.exe.config
+E:\PG1-Idle\Source\bin\Debug\Source.exe
+E:\PG1-Idle\Source\bin\Debug\Source.pdb
+E:\PG1-Idle\Source\obj\Debug\Source.exe
+E:\PG1-Idle\Source\obj\Debug\Source.pdb
+E:\PG1-Idle\Source\obj\Debug\Source.csprojAssemblyReference.cache

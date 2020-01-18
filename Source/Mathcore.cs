@@ -6,7 +6,24 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public class Mathcore
+    // Agent object behavior
+    public class Agent {
+        int index;
+        public double pointsRate { get; set; }      // Arbitrary rate that this agent index generates points.
+        public double priceFactor { get; set; }     // Arbitrary factor for price of another agent.
+        public uint agentCount { get; set; }         // Arbitrary count of this agent. Used as a multiplier for pointsRate and priceFactor.
+
+        public Agent(int argIndex, double argPointsRate, double argPriceFactor)
+        {
+            index = argIndex;
+            pointsRate = argPointsRate;
+            priceFactor = argPriceFactor;
+        }
+    }
+
+    #region
+    // Calculation Methods
+    /*public class MathCore
     {
         private static double ascore; // agent score init
         private double agent1; // private fields for initializing values 
@@ -19,7 +36,7 @@ namespace Source
         private double agent8;
         private double agent9;
 
-        public Mathcore() // init values (how many of each agent do we have?)
+        public MathCore() // init values (how many of each agent do we have?)
         {
             agent1 = 0;
             agent2 = 0;
@@ -31,7 +48,7 @@ namespace Source
             agent8 = 0;
             agent9 = 0;
         }
-        public Mathcore(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8, double a9) // Allowing for a change in value (increasing agents)
+        public MathCore(double a1, double a2, double a3, double a4, double a5, double a6, double a7, double a8, double a9) // Allowing for a change in value (increasing agents)
         {
             agent1 = a1;
             agent2 = a2;
@@ -134,8 +151,8 @@ namespace Source
             ascore += (agent1s + agent2s + agent3s + agent4s + agent5s + agent6s + agent7s + agent8s + agent9s);
             Console.WriteLine(ascore);
             System.Threading.Thread.Sleep(1000);
-        } 
+        }
+    }*/
 
-    }   
-  
+    #endregion
 }
