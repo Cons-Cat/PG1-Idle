@@ -18,7 +18,7 @@ namespace Source
 
         static class GameOperator
         {
-            static public double gamePoints { get; set; }
+            static public MassiveNumber gamePoints = new MassiveNumber(); // { get; set; }
 
             // Update the game console
             static public void UpdateConsole()
@@ -39,11 +39,17 @@ namespace Source
                 // Loop through all agents
                 for (int i = 0; i < 10; i++)
                 {
-                    GameOperator.gamePoints += agentObjsArr[i].pointsRate * agentObjsArr[i].agentCount; // Point incrementing algorithm.
-                    RenderWindow.gamePoints = (uint)GameOperator.gamePoints;
-                    RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
+                    GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.Mult(agentObjsArr[i].pointsRate, 1), agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
+                    GameOperator.gamePoints.IncreaseEchelon();
+
+                    RenderWindow.gamePoints.value = GameOperator.gamePoints.value;
+                    RenderWindow.gamePoints.echelon = GameOperator.gamePoints.echelon;
+
+                    RenderWindow.agentCount[i].value = agentObjsArr[i].agentCount.value;
+                    RenderWindow.agentCount[i].echelon = agentObjsArr[i].agentCount.echelon;
+
                     RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
-                    RenderWindow.agentPointsRate[i] = (uint)(agentObjsArr[i].pointsRate);
+                    RenderWindow.agentPointsRate[i] = (agentObjsArr[i].pointsRate);
                 }
 
                 // Prevent both threads from updating simultaneously.
@@ -74,20 +80,20 @@ namespace Source
                 if (Char.IsNumber(playerInput.KeyChar))
                 {
                     inputIndex = (int)(Char.GetNumericValue(playerInput.KeyChar) + 9) % 10;
-                    uint agentCost = (uint)agentObjsArr[inputIndex].GetPrice();
+                    MassiveNumber agentCost = agentObjsArr[inputIndex].GetPrice();
 
                     // If the player has sufficient points
-                    if ((uint)GameOperator.gamePoints >= agentCost)
+                    if (GameOperator.gamePoints.value >= agentCost.value)
                     {
                         // Increment the agent that the user inputs.
-                        agentObjsArr[inputIndex].agentCount++;
+                        agentObjsArr[inputIndex].agentCount.Add(1, 1);
 
                         // Update the console values.
-                        RenderWindow.agentCount[inputIndex]++;
-                        RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
+                        RenderWindow.agentCount[inputIndex].Add(1, 1);
+                        RenderWindow.agentPrice[inputIndex].value = agentObjsArr[inputIndex].GetPrice().value;
 
                         // Decrease the player"s points bank.
-                        GameOperator.gamePoints -= agentCost;
+                        GameOperator.gamePoints.Sub(agentCost.value, agentCost.echelon);
                     }
                     else
                     {
@@ -103,7 +109,7 @@ namespace Source
                     switch (playerInput.Key)
                     {
                         case ConsoleKey.Spacebar:
-                            GameOperator.gamePoints += 1;
+                            GameOperator.gamePoints.Add(1, 1);
 
                             break;
 
@@ -154,141 +160,5 @@ namespace Source
             Thread myInputLoop = new Thread(inputLoop);
             myInputLoop.Start();
         }
-    }
-    class CustomDouble
-    {
-        // Instantiate values
-        uint echelon;
-        double value;
-
-        // Constructor
-        public CustomDouble()
-        {
-            // Initialize values
-            echelon = 1;
-            value = 0;
-        }
-
-        // Updating the echelon
-        #region
-
-        public void IncreaseEchelon()
-        {
-            double tempValue = value;
-            uint increments = 0;
-
-            // While the ones place is empty:
-            while (tempValue % 1 == 0)
-            {
-                // Increment the decimal place.
-                tempValue *= 10;
-                increments++;
-            }
-
-            // Increment the echelon every three ticks.
-            echelon += increments / 3;
-        }
-
-        public void DecreaseEchelon()
-        {
-            double tempValue = value;
-            uint increments = 0;
-
-            // While the ones place is empty:
-            while (tempValue.ToString().Length > 3)
-            {
-                // Decrement the decimal place.
-                tempValue /= 10;
-
-                // Decrement the echelon every three ticks.
-                increments++;
-            }
-
-            // Decrement the echelon every three ticks.
-            echelon -= increments / 3;
-        }
-
-        public string GetAbbreviation()
-        {
-            string returnStr;
-
-            switch (echelon)
-            {
-                case 1:
-                    returnStr = "";
-                    break;
-
-                case 2:
-                    // Abbreviate thousands.
-                    returnStr = " K";
-                    break;
-
-                case 3:
-                    // Abbreviate millions.
-                    returnStr = " M";
-                    break;
-
-                case 4:
-                    // Abbreviate billions.
-                    returnStr = " B";
-                    break;
-
-                case 5:
-                    // Abbreviate trillions.
-                    returnStr = " T";
-                    break;
-
-                case 6:
-                    // Abbreviate quadrillions.
-                    returnStr = " Q";
-                    break;
-
-                default:
-                    // Generic abbreviation from quintillion onwards.
-                    returnStr = " e" + (echelon * 3).ToString();
-                    break;
-            }
-
-            return value.ToString() + returnStr;
-        }
-
-        #endregion
-
-        // Math operations:
-        #region
-
-        // Addition operation:
-        public void Add(double argDouble, uint argEchelon)
-        {
-            value += (argDouble * 10 * (argEchelon - this.echelon));
-
-            IncreaseEchelon();
-        }
-
-        // Subtraction operation:
-        public void Sub(double argDouble, uint argEchelon)
-        {
-            value -= (argDouble * 10 * (argEchelon - this.echelon));
-
-            DecreaseEchelon();
-        }
-
-        // Multiplication operation:
-        public void Mult(double argDouble, uint argEchelon)
-        {
-            value *= (argDouble * 10 * (argEchelon - this.echelon));
-
-            IncreaseEchelon();
-        }
-
-        // Exponentiation operation:
-        public void Pow(double argExponent)
-        {
-            value = Math.Pow(value, argExponent);
-
-            IncreaseEchelon();
-        }
-
-        #endregion
     }
 }
