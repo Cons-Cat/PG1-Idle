@@ -37,8 +37,10 @@ namespace Source
                 for (int i = 0; i < 10; i++)
                 {
                     GameOperator.gamePoints += agentObjsArr[i].pointsRate * agentObjsArr[i].agentCount; // Point incrementing algorithm.
+                    RenderWindow.gamePoints = (uint)GameOperator.gamePoints;
                     RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
-                    RenderWindow.agentPrice[i] = (uint)(agentObjsArr[i].priceFactor * (agentObjsArr[i].agentCount + 1));
+                    RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
+                    RenderWindow.agentPointsRate[i] = (uint)(agentObjsArr[i].pointsRate);
                 }
 
                 // Prevent both threads from updating simultaneously.
@@ -59,13 +61,37 @@ namespace Source
         {
             while (true)
             {
+                int inputIndex;
+
                 // Player controls
                 ConsoleKeyInfo playerInput = Console.ReadKey();
 
                 if (Char.IsNumber(playerInput.KeyChar))
                 {
-                    // Increment the agent that the user inputs
-                    agentObjsArr[(int)(Char.GetNumericValue(playerInput.KeyChar) + 9) % 10].agentCount++;
+                    inputIndex = (int)(Char.GetNumericValue(playerInput.KeyChar) + 9) % 10;
+                    uint agentCost = (uint)agentObjsArr[inputIndex].GetPrice();
+
+                    // If the player has sufficient points
+                    if ((uint)GameOperator.gamePoints >= agentCost)
+                    {
+                        // Increment the agent that the user inputs.
+                        agentObjsArr[inputIndex].agentCount++;
+
+                        // Update the console values.
+                        RenderWindow.agentCount[inputIndex]++;
+                        RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
+
+                        // Decrease the player's points bank.
+                        GameOperator.gamePoints -= agentCost;
+                    }
+                    else
+                    {
+                        // Clear the user input line.
+                        Console.SetCursorPosition(0, Console.CursorTop);
+
+                        // Don't bother executing UpdateConsole(), since no value changed.
+                        continue;
+                    }
                 }
                 else
                 {
@@ -100,16 +126,16 @@ namespace Source
         static void Main()
         {
             // Initialize ten agents.
-            agentObjsArr[0] = new Agent(0,1.1,10);
-            agentObjsArr[1] = new Agent(1,1.2,50);
-            agentObjsArr[2] = new Agent(2,1.4,150);
-            agentObjsArr[3] = new Agent(3,1.75,200);
-            agentObjsArr[4] = new Agent(4,1,300);
-            agentObjsArr[5] = new Agent(5,1.5,400);
-            agentObjsArr[6] = new Agent(6,2,550);
-            agentObjsArr[7] = new Agent(7,4,700);
-            agentObjsArr[8] = new Agent(8,7,1000);
-            agentObjsArr[9] = new Agent(9,10,2000);
+            agentObjsArr[0] = new Agent(1.1,10);
+            agentObjsArr[1] = new Agent(1.5,15);
+            agentObjsArr[2] = new Agent(2,25);
+            agentObjsArr[3] = new Agent(2.25,40);
+            agentObjsArr[4] = new Agent(2.75,60);
+            agentObjsArr[5] = new Agent(3,85);
+            agentObjsArr[6] = new Agent(5,100);
+            agentObjsArr[7] = new Agent(6,150);
+            agentObjsArr[8] = new Agent(8,200);
+            agentObjsArr[9] = new Agent(10.5,300);
 
             // Initial console draw.
             UpdateConsole();
@@ -119,7 +145,6 @@ namespace Source
             Thread myGameLoop = new Thread(gameLoop);
             myGameLoop.Start();
             
-
             ThreadStart inputLoop = new ThreadStart(PlayerInput);
             Thread myInputLoop = new Thread(inputLoop);
             myInputLoop.Start();

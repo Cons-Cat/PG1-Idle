@@ -29,9 +29,11 @@ namespace Source
 		RenderGridTypes[,] gridType;
 		ConsoleColor[,] gridCol;
 
-		// Passed in by Main()
+		// Passed in by Program.cs
 		public static uint[] agentCount;
-		public static uint[] agentPrice;
+		public static double[] agentPrice;
+		public static uint[] agentPointsRate;
+		public static uint gamePoints;
 
 		// Constructor
 		public RenderWindow(uint argRows, uint argColumns) {
@@ -46,28 +48,33 @@ namespace Source
             // Declare arrays:
             #region
 
-            columnWidth = new int[columnCount];
-
-			for (uint i = 0; i < columnCount; i++)
-			{
-				columnWidth[i] = 25;
-			}
-
 			gridString = new string[rowCount, columnCount];
 			gridValue = new uint[rowCount, columnCount];
 			agentCount = new uint[10];
-			agentPrice = new uint[10];
+			agentPrice = new double[10];
+			agentPointsRate = new uint[10];
 			gridHasVal = new bool[rowCount, columnCount];
 			gridIsStatic = new bool[rowCount, columnCount];
 			gridType = new RenderGridTypes[rowCount, columnCount];
 			gridCol = new ConsoleColor[rowCount, columnCount];
 
-            #endregion
+			columnWidth = new int[columnCount];
 
-            // Hardcoded values:
-            #region
+			for (uint i = 0; i < columnCount; i++)
+			{
+				columnWidth[i] = 25;
+			}
+			for (uint i = 0; i < rowCount; i++)
+			{
+				agentPointsRate[i] = 1;
+			}
 
-            columnWidth[0] = 8;
+				#endregion
+
+			// Hardcoded values:
+			#region
+
+			columnWidth[0] = 8;
 			columnWidth[1] = 32;
 
             for (uint i = 0; i < rowCount; i++)
@@ -143,6 +150,7 @@ namespace Source
         public void RenderLoop()
 		{
 			string tempStr;
+			uint optimalAgent = OptimalAgent();
 
 			// Refresh the console;
 			Console.Clear();
@@ -182,8 +190,25 @@ namespace Source
 							Console.ForegroundColor = ConsoleColor.White; // Reset color
 							Console.Write(tempStr);
 
-							Console.ForegroundColor = ConsoleColor.DarkGray;
-							Console.Write((agentPrice[rowIterate]).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+							if (rowIterate == optimalAgent)
+							{
+								Console.ForegroundColor = ConsoleColor.DarkGreen;
+							}
+							else
+							{
+								if (gamePoints >= agentPrice[rowIterate])
+								{
+									// If the player can afford this agent.
+									Console.ForegroundColor = ConsoleColor.DarkGray;
+								}
+								else
+								{
+									// If the player cannot afford this agent.
+									Console.ForegroundColor = ConsoleColor.DarkRed;
+								}
+							}
+
+							Console.Write(((uint)agentPrice[rowIterate]).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
 
 							break;
 					}
@@ -194,6 +219,22 @@ namespace Source
 				// Shift to next row.
 				Console.WriteLine();
 			}
+		}
+
+		private uint OptimalAgent()
+		{
+			uint returnRow = 0;
+
+			for (uint i = 0; i < rowCount; i++)
+			{
+				// Find shortest time for an agent's income to break even with its cost.
+				if ((agentPrice[i] / agentPointsRate[i]) <= (agentPrice[returnRow] / agentPointsRate[returnRow]))
+				{
+					returnRow = i;
+				}
+			}
+
+			return returnRow;
 		}
 	}
 }
