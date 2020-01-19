@@ -13,6 +13,9 @@ namespace Source
         static Agent[] agentObjsArr = new Agent[10]; // 10 agents
         static RenderWindow renderObj = new RenderWindow(9, 3); // 10 rows, 4 columns
 
+        static public int SharedResource { get; set; }
+        static public object _locker = 0;
+
         static class GameOperator
         {
             static public double gamePoints { get; set; }
@@ -25,6 +28,7 @@ namespace Source
             renderObj.RenderLoop();
         }
 
+        // Method for game loop thread.
         static void GameLoop()
         {
             while (true)
@@ -37,13 +41,18 @@ namespace Source
                     RenderWindow.agentPrice[i] = (uint)(agentObjsArr[i].priceFactor * (agentObjsArr[i].agentCount + 1));
                 }
 
-                UpdateConsole();
+                // Prevent both threads from updating simultaneously.
+                lock (_locker)
+                {
+                    UpdateConsole();
+                    SharedResource++;
+                }
 
                 Thread.Sleep(1000);
             }
         }
 
-        // Method for player input thread
+        // Method for player input thread.
         #region
 
         static void PlayerInput()
@@ -75,7 +84,12 @@ namespace Source
                     }
                 }
 
-                UpdateConsole();
+                // Prevent both threads from updating simultaneously.
+                lock (_locker)
+                {
+                    UpdateConsole();
+                    SharedResource--;
+                }
 
                 Thread.Sleep(100);
             }
@@ -104,6 +118,7 @@ namespace Source
             ThreadStart gameLoop = new ThreadStart(GameLoop);
             Thread myGameLoop = new Thread(gameLoop);
             myGameLoop.Start();
+            
 
             ThreadStart inputLoop = new ThreadStart(PlayerInput);
             Thread myInputLoop = new Thread(inputLoop);
