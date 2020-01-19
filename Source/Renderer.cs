@@ -69,7 +69,7 @@ namespace Source
 				agentPointsRate[i] = 1;
 			}
 
-				#endregion
+			#endregion
 
 			// Hardcoded values:
 			#region
@@ -172,7 +172,7 @@ namespace Source
 							Console.Write(tempStr);
 
 							Console.ForegroundColor = ConsoleColor.Magenta;
-							Console.Write(((uint)displayPoints).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+							Console.Write(AbbreviateNumber((uint)displayPoints).PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
 
 							break;
 						case RenderGridTypes.GridString:
@@ -183,7 +183,7 @@ namespace Source
 							Console.Write(tempStr);
 
 							Console.ForegroundColor = ConsoleColor.DarkGray;
-							Console.Write((agentCount[rowIterate]).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+							Console.Write(AbbreviateNumber(agentCount[rowIterate]).PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
 
 							break;
 						case RenderGridTypes.GridPrice:
@@ -208,7 +208,7 @@ namespace Source
 								}
 							}
 
-							Console.Write(((uint)agentPrice[rowIterate]).ToString().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+							Console.Write(AbbreviateNumber((uint)agentPrice[rowIterate]).PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
 
 							break;
 					}
@@ -235,6 +235,73 @@ namespace Source
 			}
 
 			return returnRow;
+		}
+
+		private string AbbreviateNumber(uint argNum)
+		{
+			string returnStr;
+
+			if (argNum.ToString().Length <= 5)
+			{
+				// Do not clip numbers that are 5 digits or fewer.
+				returnStr = argNum.ToString();
+			}
+			else if (argNum.ToString().Length <= 6)
+			{
+				// Clip numbers in the range of 100,000 - 999,999.
+				returnStr = argNum.ToString();
+				ReturnString(returnStr[0], returnStr[1], returnStr[2], 'K');
+			}
+			else if (argNum.ToString().Length <= 9)
+			{
+				// Clip numbers in the range of 1,000,000 - 999,999,999
+				returnStr = argNum.ToString();
+				ReturnString(returnStr[0], returnStr[1], returnStr[2], 'K');
+			}
+			else if (argNum.ToString().Length <= 12)
+			{
+				// Clip numbers in the range of 1,000,000,000 - 999,999,999,999
+				returnStr = argNum.ToString();
+				ReturnString(returnStr[0], returnStr[1], returnStr[2], 'B');
+			}
+			else if (argNum.ToString().Length <= 15)
+			{
+				// Clip numbers in the range of 1,000,000,000,000 - 999,999,999,999,999
+				returnStr = argNum.ToString();
+				ReturnString(returnStr[0], returnStr[1], returnStr[2], 'T');
+			}
+			else if (argNum.ToString().Length <= 18)
+			{
+				// Clip numbers in the range of 1,000,000,000,000,000 - 999,999,999,999,999,999
+				returnStr = argNum.ToString();
+				ReturnString(returnStr[0], returnStr[1], returnStr[2], 'Q');
+			}
+			else
+			{
+				returnStr = "HUUUUUGE NUM!";
+			}
+
+			// Local function to assemble the string.
+			void ReturnString(char argChar0, char argChar1, char argChar2, char argCharEnd)
+			{
+				if (argChar1.Equals('0'))
+				{
+					// If the number's second digit is 0, only print the first.
+					returnStr = argChar0.ToString() + argCharEnd.ToString();
+				}
+				else if (argChar2.Equals('0'))
+				{
+					// If the number's third digit is 0, only print the first two.
+					returnStr = argChar0.ToString() + "." + argChar1.ToString() + argCharEnd.ToString();
+				}
+				else
+				{
+					// If the number's first three digits are non-zero, print them all.
+					returnStr = argChar0.ToString() + "." + argChar1.ToString() + argChar2.ToString() + argCharEnd.ToString();
+				}
+			}
+
+			return returnStr;
 		}
 	}
 }
