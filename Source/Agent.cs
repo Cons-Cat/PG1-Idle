@@ -20,7 +20,7 @@ namespace Source
 
         public double GetPrice()
         {
-            return Math.Pow((priceFactor * (agentCount + 1)),1.2);
+            return Math.Pow(priceFactor * (agentCount + 1),1.2);
         }
     }
 }
