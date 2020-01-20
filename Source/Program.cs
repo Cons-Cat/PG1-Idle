@@ -39,7 +39,6 @@ namespace Source
                 // Loop through all agents
                 for (int i = 0; i < 10; i++)
                 {
-                    //GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.Mult(agentObjsArr[i].pointsRate, 1), agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
                     GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.value, agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
 
                     RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
@@ -83,17 +82,19 @@ namespace Source
                     MassiveNumber agentCost = agentObjsArr[inputIndex].GetPrice();
 
                     // If the player has sufficient points
-                    if (GameOperator.gamePoints.echelon >= agentCost.echelon && GameOperator.gamePoints.value >= agentCost.value)
+                    if (GameOperator.gamePoints.IsGreater(agentCost))
                     {
                         // Increment the agent that the user inputs.
                         agentObjsArr[inputIndex].agentCount.value = agentObjsArr[inputIndex].agentCount.Add(1, 1);
+                        agentObjsArr[inputIndex].agentCount.UpdateEchelon();
 
                         // Update the console values.
-                        RenderWindow.agentCount[inputIndex].value = agentObjsArr[inputIndex].agentCount.value;
-                        RenderWindow.agentPrice[inputIndex].value = agentObjsArr[inputIndex].GetPrice().value;
+                        RenderWindow.agentCount[inputIndex] = agentObjsArr[inputIndex].agentCount;
+                        RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
 
                         // Decrease the player's points bank.
-                        GameOperator.gamePoints.value = GameOperator.gamePoints.Sub(agentCost.value, (uint)(agentCost.echelon));
+                        GameOperator.gamePoints.value = GameOperator.gamePoints.Sub(agentCost.value, agentCost.echelon);
+                        GameOperator.gamePoints.UpdateEchelon();
                     }
                     else
                     {
@@ -110,6 +111,8 @@ namespace Source
                     {
                         case ConsoleKey.Spacebar:
                             GameOperator.gamePoints.value = GameOperator.gamePoints.Add(1, 1);
+                            GameOperator.gamePoints.UpdateEchelon();
+
                             RenderWindow.gamePoints = GameOperator.gamePoints;
 
                             break;
@@ -138,16 +141,16 @@ namespace Source
         static void Main()
         {
             // Initialize ten agents.
-            agentObjsArr[0] = new Agent(1.1, 10);
-            agentObjsArr[1] = new Agent(1.5, 15);
-            agentObjsArr[2] = new Agent(2, 25);
-            agentObjsArr[3] = new Agent(2.25, 40);
-            agentObjsArr[4] = new Agent(2.75, 60);
-            agentObjsArr[5] = new Agent(3, 85);
-            agentObjsArr[6] = new Agent(5, 100);
-            agentObjsArr[7] = new Agent(6, 150);
-            agentObjsArr[8] = new Agent(8, 200);
-            agentObjsArr[9] = new Agent(10.5, 300);
+            agentObjsArr[0] = new Agent(1, 10, 1.0275);
+            agentObjsArr[1] = new Agent(2.5, 30, 1.03);
+            agentObjsArr[2] = new Agent(5, 70, 1.035);
+            agentObjsArr[3] = new Agent(10, 150, 1.04);
+            agentObjsArr[4] = new Agent(20, 350, 1.0425);
+            agentObjsArr[5] = new Agent(45, 500, 1.044);
+            agentObjsArr[6] = new Agent(85, 1000, 1.05);
+            agentObjsArr[7] = new Agent(150, 2000, 1.055);
+            agentObjsArr[8] = new Agent(250, 3500, 1.06);
+            agentObjsArr[9] = new Agent(300, 5000, 1.065);
 
             // Initial console draw.
             GameOperator.UpdateConsole();

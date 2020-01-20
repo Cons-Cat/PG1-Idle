@@ -91,7 +91,7 @@ namespace Source
                     break;
             }
 
-            return value.ToString() + returnStr;
+            return ((uint)value).ToString() + returnStr;
         }
 
         // Math operations:
@@ -104,17 +104,17 @@ namespace Source
         }
 
         // Subtraction operation:
-        public double Sub(double argDouble, uint argEchelon)
+        public double Sub(double argDouble, int argEchelon)
         {
             return value - (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         // Multiplication operation:
-        public double Mult(double argDouble, uint argEchelon)
+        public double Mult(double argDouble, int argEchelon)
         {
             return value * (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
-        public double Div(double argDouble, uint argEchelon)
+        public double Div(double argDouble, int argEchelon)
         {
             return value / (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
@@ -123,6 +123,26 @@ namespace Source
         public double Pow(double argExponent)
         {
             return Math.Pow(value, argExponent);
+        }
+
+        // Relationship operation:
+        public bool IsGreater(MassiveNumber argNum)
+        {
+            bool returnBool;
+
+            if ((this.echelon > argNum.echelon) || (this.echelon == argNum.echelon && this.value >= argNum.value))
+            {
+                /*Debug.WriteLine(this.echelon);
+                Debug.WriteLine(argNum.echelon);
+                Debug.WriteLine("");*/
+                returnBool = true;
+            }
+            else
+            {
+                returnBool = false;
+            }
+
+            return returnBool;
         }
 
         #endregion

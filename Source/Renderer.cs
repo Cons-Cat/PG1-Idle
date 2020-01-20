@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Source
@@ -44,7 +45,7 @@ namespace Source
 
             rowCount = argRows + 1;
             columnCount = argColumns + 1;
-            
+
             #endregion
 
             // Declare arrays:
@@ -195,20 +196,30 @@ namespace Source
                             Console.ForegroundColor = ConsoleColor.White; // Reset color
                             Console.Write(tempStr);
 
-                            if (rowIterate == optimalAgent)
+                            if (gamePoints.IsGreater(agentPrice[rowIterate]))
                             {
-                                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                            }
-                            else
-                            {
-                                if (gamePoints.echelon >= agentPrice[rowIterate].echelon && gamePoints.value >= agentPrice[rowIterate].value)
+                                // If the player can afford this agent.
+                                if (rowIterate == optimalAgent)
                                 {
-                                    // If the player can afford this agent.
-                                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                                    // If this is the most cost efficient agent.
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                                 }
                                 else
                                 {
-                                    // If the player cannot afford this agent.
+                                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                                }
+                            }
+                            else
+                            {
+                                // If the player cannot afford this agent.
+                                // If the player can afford this agent.
+                                if (rowIterate == optimalAgent)
+                                {
+                                    // If this is the most cost efficient agent.
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                }
+                                else
+                                {
                                     Console.ForegroundColor = ConsoleColor.DarkRed;
                                 }
                             }

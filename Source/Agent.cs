@@ -10,21 +10,31 @@ namespace Source
     public class Agent
     {
         public double pointsRate { get; set; }                  // Arbitrary rate that this agent index generates points.
-        public double priceFactor { get; set; }                 // Arbitrary factor for price of another agent.
+        public double initPrice { get; set; }                   // Arbitrary price to scale by priceFactor.
+        public double priceFactor { get; set; }                 // Arbitrary scaling of initPrice.
         public MassiveNumber agentCount = new MassiveNumber();  // Arbitrary count of this agent. Used as a multiplier for pointsRate and priceFactor.
 
-        public Agent(double argPointsRate, double argPriceFactor)
+        public Agent(double argPointsRate, double argInitialPrice, double argPriceFactor)
         {
-            agentCount.value = 20;
+            agentCount.value = 0;
             pointsRate = argPointsRate;
+            initPrice = argInitialPrice;
             priceFactor = argPriceFactor;
         }
 
         public MassiveNumber GetPrice()
         {
             MassiveNumber tempNum = new MassiveNumber();
-            tempNum.value = priceFactor * (agentCount.Add(1, 1));
-            tempNum.value = tempNum.Pow(1.15);
+            tempNum.value = 1;
+            tempNum.value = tempNum.Mult(initPrice, 1);
+
+            if (agentCount.value > 0)
+            {
+                tempNum.value = tempNum.Mult(agentCount.value + 1, agentCount.echelon);
+                tempNum.value = tempNum.Pow(priceFactor);
+            }
+
+            tempNum.UpdateEchelon();
 
             return tempNum;
         }
