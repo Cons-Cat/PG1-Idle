@@ -15,6 +15,7 @@ namespace Source
 
         public Agent(double argPointsRate, double argPriceFactor)
         {
+            agentCount.value = 20;
             pointsRate = argPointsRate;
             priceFactor = argPriceFactor;
         }

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Source
 {
     public class MassiveNumber
     {
         // Instantiate values
-        public uint echelon { get; set; }
+        public int echelon { get; set; }
         public double value { get; set; }
 
         // Constructor
@@ -22,22 +23,25 @@ namespace Source
         public void UpdateEchelon()
         {
             double tempValue = value;
+            double decimalShift = 0;
 
             // If the one-thousands place is not empty:
-            if ((uint)tempValue.ToString().Length >= 4)
+            if (((uint)value).ToString().Length >= 4)
             {
-                // Decrement the decimal place.
-                tempValue /= Math.Pow(1000, ((uint)value.ToString().Length - 1) % 3);
+                // Decrement the decimal place in multiples of 3.
+                decimalShift = Math.Pow(1000, (((uint)value).ToString().Length) % 3);
+                tempValue /= decimalShift;
 
-                // Increment the echelon
-                echelon += ((uint)value.ToString().Length - 1) % 3;
+                // Increment the echelon by 1 for each shift of 3 in the decimal place.
+                echelon += (int)decimalShift % 3;
 
-                // Update value
+                // Update value with 6 decimal precision
+                //value = Math.Truncate(tempValue * 600) / 600;
                 value = tempValue;
             }
 
             // If the ones place is empty:
-            if ((uint)tempValue.ToString().Length == 0)
+            if (((uint)tempValue).ToString().Length == 0)
             {
                 // UNFINISHED
             }
@@ -53,7 +57,7 @@ namespace Source
             switch (echelon)
             {
                 case 1:
-                    returnStr = "!";
+                    returnStr = "";
                     break;
 
                 case 2:
@@ -94,25 +98,25 @@ namespace Source
         #region
 
         // Addition operation:
-        public double Add(double argDouble, uint argEchelon)
+        public double Add(double argDouble, int argEchelon)
         {
-            return value + (argDouble * Math.Pow(10, argEchelon - this.echelon));
+            return value + (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         // Subtraction operation:
         public double Sub(double argDouble, uint argEchelon)
         {
-            return value - (argDouble * Math.Pow(10, argEchelon - this.echelon));
+            return value - (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         // Multiplication operation:
         public double Mult(double argDouble, uint argEchelon)
         {
-            return value * (argDouble * Math.Pow(10, argEchelon - this.echelon));
+            return value * (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
         public double Div(double argDouble, uint argEchelon)
         {
-            return value / (argDouble * Math.Pow(10, argEchelon - this.echelon));
+            return value / (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         // Exponentiation operation:

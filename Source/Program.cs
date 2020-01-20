@@ -39,15 +39,16 @@ namespace Source
                 // Loop through all agents
                 for (int i = 0; i < 10; i++)
                 {
-                    GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.Mult(agentObjsArr[i].pointsRate, 1), agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
-                    GameOperator.gamePoints.UpdateEchelon();
-
-                    RenderWindow.gamePoints = GameOperator.gamePoints;
+                    //GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.Mult(agentObjsArr[i].pointsRate, 1), agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
+                    GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.value, agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
 
                     RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
                     RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
                     RenderWindow.agentPointsRate[i] = (agentObjsArr[i].pointsRate);
                 }
+
+                RenderWindow.gamePoints = GameOperator.gamePoints;
+                GameOperator.gamePoints.UpdateEchelon();
 
                 // Prevent both threads from updating simultaneously.
                 lock (_locker)
@@ -92,7 +93,7 @@ namespace Source
                         RenderWindow.agentPrice[inputIndex].value = agentObjsArr[inputIndex].GetPrice().value;
 
                         // Decrease the player's points bank.
-                        GameOperator.gamePoints.value = GameOperator.gamePoints.Sub(agentCost.value, agentCost.echelon);
+                        GameOperator.gamePoints.value = GameOperator.gamePoints.Sub(agentCost.value, (uint)(agentCost.echelon));
                     }
                     else
                     {
