@@ -19,40 +19,28 @@ namespace Source
         // Updating the echelon
         #region
 
-        public void IncreaseEchelon()
+        public void UpdateEchelon()
         {
             double tempValue = value;
-            uint increments = 0;
 
-            // While the ones place is empty:
-            while (tempValue % 1 == 0)
-            {
-                // Increment the decimal place.
-                tempValue *= 10;
-                increments++;
-            }
-
-            // Increment the echelon every three ticks.
-            echelon += increments / 3;
-        }
-
-        public void DecreaseEchelon()
-        {
-            double tempValue = value;
-            uint increments = 0;
-
-            // While the ones place is empty:
-            while (tempValue.ToString().Length > 3)
+            // If the one-thousands place is not empty:
+            if ((uint)tempValue.ToString().Length >= 4)
             {
                 // Decrement the decimal place.
-                tempValue /= 10;
+                tempValue /= Math.Pow(1000, ((uint)value.ToString().Length - 1) % 3);
 
-                // Decrement the echelon every three ticks.
-                increments++;
+                // Increment the echelon
+                echelon += ((uint)value.ToString().Length - 1) % 3;
+
+                // Update value
+                value = tempValue;
             }
 
-            // Decrement the echelon every three ticks.
-            echelon -= increments / 3;
+            // If the ones place is empty:
+            if ((uint)tempValue.ToString().Length == 0)
+            {
+                // UNFINISHED
+            }
         }
 
         #endregion
@@ -65,7 +53,7 @@ namespace Source
             switch (echelon)
             {
                 case 1:
-                    returnStr = "";
+                    returnStr = "!";
                     break;
 
                 case 2:
@@ -108,23 +96,23 @@ namespace Source
         // Addition operation:
         public double Add(double argDouble, uint argEchelon)
         {
-            return value + (argDouble * 10 * (argEchelon - this.echelon));
+            return value + (argDouble * Math.Pow(10, argEchelon - this.echelon));
         }
 
         // Subtraction operation:
         public double Sub(double argDouble, uint argEchelon)
         {
-            return value - (argDouble * 10 * (argEchelon - this.echelon));
+            return value - (argDouble * Math.Pow(10, argEchelon - this.echelon));
         }
 
         // Multiplication operation:
         public double Mult(double argDouble, uint argEchelon)
         {
-            return value * (argDouble * 10 * (argEchelon - this.echelon));
+            return value * (argDouble * Math.Pow(10, argEchelon - this.echelon));
         }
         public double Div(double argDouble, uint argEchelon)
         {
-            return value / (argDouble * 10 * (argEchelon - this.echelon));
+            return value / (argDouble * Math.Pow(10, argEchelon - this.echelon));
         }
 
         // Exponentiation operation:

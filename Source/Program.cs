@@ -24,7 +24,7 @@ namespace Source
             static public void UpdateConsole()
             {
                 // Update the renderer"s points.
-                RenderWindow.displayPoints = GameOperator.gamePoints;
+                RenderWindow.gamePoints = GameOperator.gamePoints;
                 renderObj.RenderLoop();
             }
         }
@@ -39,15 +39,12 @@ namespace Source
                 // Loop through all agents
                 for (int i = 0; i < 10; i++)
                 {
-                    GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.Mult(agentObjsArr[i].pointsRate, 1), agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
-                    GameOperator.gamePoints.IncreaseEchelon();
+                    GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.Mult(agentObjsArr[i].pointsRate, 1), agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
+                    GameOperator.gamePoints.UpdateEchelon();
 
-                    RenderWindow.gamePoints.value = GameOperator.gamePoints.value;
-                    RenderWindow.gamePoints.echelon = GameOperator.gamePoints.echelon;
+                    RenderWindow.gamePoints = GameOperator.gamePoints;
 
-                    RenderWindow.agentCount[i].value = agentObjsArr[i].agentCount.value;
-                    RenderWindow.agentCount[i].echelon = agentObjsArr[i].agentCount.echelon;
-
+                    RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
                     RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
                     RenderWindow.agentPointsRate[i] = (agentObjsArr[i].pointsRate);
                 }
@@ -79,21 +76,23 @@ namespace Source
 
                 if (Char.IsNumber(playerInput.KeyChar))
                 {
+                    // Get array index from digit input.
                     inputIndex = (int)(Char.GetNumericValue(playerInput.KeyChar) + 9) % 10;
+
                     MassiveNumber agentCost = agentObjsArr[inputIndex].GetPrice();
 
                     // If the player has sufficient points
-                    if (GameOperator.gamePoints.value >= agentCost.value)
+                    if (GameOperator.gamePoints.echelon >= agentCost.echelon && GameOperator.gamePoints.value >= agentCost.value)
                     {
                         // Increment the agent that the user inputs.
-                        agentObjsArr[inputIndex].agentCount.Add(1, 1);
+                        agentObjsArr[inputIndex].agentCount.value = agentObjsArr[inputIndex].agentCount.Add(1, 1);
 
                         // Update the console values.
-                        RenderWindow.agentCount[inputIndex].Add(1, 1);
+                        RenderWindow.agentCount[inputIndex].value = agentObjsArr[inputIndex].agentCount.value;
                         RenderWindow.agentPrice[inputIndex].value = agentObjsArr[inputIndex].GetPrice().value;
 
-                        // Decrease the player"s points bank.
-                        GameOperator.gamePoints.Sub(agentCost.value, agentCost.echelon);
+                        // Decrease the player's points bank.
+                        GameOperator.gamePoints.value = GameOperator.gamePoints.Sub(agentCost.value, agentCost.echelon);
                     }
                     else
                     {
@@ -109,7 +108,8 @@ namespace Source
                     switch (playerInput.Key)
                     {
                         case ConsoleKey.Spacebar:
-                            GameOperator.gamePoints.Add(1, 1);
+                            GameOperator.gamePoints.value = GameOperator.gamePoints.Add(1, 1);
+                            RenderWindow.gamePoints = GameOperator.gamePoints;
 
                             break;
 
