@@ -134,6 +134,7 @@ namespace Source
         {
             return value * (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
+
         public double Div(double argDouble, int argEchelon)
         {
             return value / (argDouble * Math.Pow(1000, argEchelon - this.echelon));
