@@ -81,7 +81,8 @@ namespace Source
             #region
 
             columnWidth[0] = 8;
-            columnWidth[1] = 32;
+            columnWidth[1] = 50;
+            columnWidth[2] = 35;
 
             for (uint i = 0; i < rowCount; i++)
             {
@@ -110,12 +111,12 @@ namespace Source
                         if (i == rowCount / 2 - 1)
                         {
                             gridType[i, j] = RenderGridTypes.GridPoints;
-                            gridString[i, j] = "Points: ";
+                            gridString[i, j] = "Dollars: ";
                         }
                         else if (i == rowCount / 2)
                         {
                             gridType[i, j] = RenderGridTypes.GridString;
-                            gridString[i, j] = "Press Spacebar";
+                            gridString[i, j] = "Press Spacebar to dig";
                         }
                         else if (i == rowCount / 2 + 1)
                         {
@@ -131,8 +132,57 @@ namespace Source
 
                     if (j == 2)
                     {
-                        gridString[i, j] = "Agent " + ((i + 1) % 10).ToString() + ": ";
-                        gridType[i, j] = RenderGridTypes.GridAgents;
+                        if (i == 0)
+                        {
+                            gridString[i, j] = ("Stone Harvester: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if(i == 1)
+                        {
+                            gridString[i, j] = ("Coal Miner: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if(i == 2)
+                        {
+                            gridString[i, j] = ("Iron Miner: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 3)
+                        {
+                            gridString[i, j] = ("Drill Operator: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 4)
+                        {
+                            gridString[i, j] = ("Steel Drill Operator: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 5)
+                        {
+                            gridString[i, j] = ("Diamond Drill Operator: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 6)
+                        {
+                            gridString[i, j] = ("Blast Miner: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 7)
+                        {
+                            gridString[i, j] = ("Demolitionist: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 8)
+                        {
+                            gridString[i, j] = ("Demolition Expert: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 9)
+                        {
+                            gridString[i, j] = ("Crypto Miner: ");
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+
                     }
 
                     #endregion

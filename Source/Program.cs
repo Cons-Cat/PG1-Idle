@@ -9,6 +9,7 @@ namespace Source
 {
     class Program
     {
+        public static bool exitcheck = false; // checker for killing threads
         // Instantiation
         static Agent[] agentObjsArr = new Agent[10]; // 10 agents
         static RenderWindow renderObj = new RenderWindow(9, 3); // 10 rows, 4 columns
@@ -58,6 +59,11 @@ namespace Source
 
                 // Loop every second.
                 Thread.Sleep(1000);
+
+                if (Program.exitcheck == true)
+                {
+                    break;
+                }
             }
         }
 
@@ -120,9 +126,14 @@ namespace Source
 
                         case ConsoleKey.X:
                             Console.Clear();
-                            Console.WriteLine("Thanks for playing! Your final score is: " + GameOperator.gamePoints);
+                            exitcheck = true;
+                           // Console.WriteLine("Thanks for playing! Your final score is: " + GameOperator.gamePoints);
 
                             break;
+                    }
+                    if (Program.exitcheck == true)
+                    {
+                        break;
                     }
                 }
 
@@ -135,6 +146,15 @@ namespace Source
 
                 Thread.Sleep(100);
             }
+            if (Program.exitcheck == true)
+            {
+                Console.WriteLine("Thank you for playing! Your final total of money earned was: " + GameOperator.gamePoints.GetAbbreviation());
+                Console.ReadKey();
+            }
+        }
+        public static void Gamekill()
+        {
+         
         }
 
         #endregion
@@ -164,6 +184,7 @@ namespace Source
             ThreadStart inputLoop = new ThreadStart(PlayerInput);
             Thread myInputLoop = new Thread(inputLoop);
             myInputLoop.Start();
+
         }
     }
 }
