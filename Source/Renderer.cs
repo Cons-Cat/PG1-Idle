@@ -80,9 +80,12 @@ namespace Source
             // Hardcoded values:
             #region
 
-            columnWidth[0] = 8;
-            columnWidth[1] = 35;
-            columnWidth[2] = 35;
+            columnWidth[0] = 8;     // Empty
+            columnWidth[1] = 30;    // Legend
+            columnWidth[2] = 7;    // Agent Keys
+            columnWidth[3] = 25;    // Agent Count
+            columnWidth[4] = 17;    // Agent Price
+                                    // Agent Label
 
             for (uint i = 0; i < rowCount; i++)
             {
@@ -102,6 +105,7 @@ namespace Source
                     }
 
                     #endregion
+
                     // Write leftmost column.
                     #region
 
@@ -127,62 +131,13 @@ namespace Source
 
                     #endregion
 
-                    // Write agents column.
+                    // Write key press column
                     #region
 
                     if (j == 2)
                     {
-                        if (i == 0)
-                        {
-                            gridString[i, j] = ("Stone Harvester: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if(i == 1)
-                        {
-                            gridString[i, j] = ("Coal Miner: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if(i == 2)
-                        {
-                            gridString[i, j] = ("Iron Miner: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if (i == 3)
-                        {
-                            gridString[i, j] = ("Drill Operator: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if (i == 4)
-                        {
-                            gridString[i, j] = ("Steel Drill Operator: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if (i == 5)
-                        {
-                            gridString[i, j] = ("Diamond Drill Operator: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if (i == 6)
-                        {
-                            gridString[i, j] = ("Blast Miner: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if (i == 7)
-                        {
-                            gridString[i, j] = ("Demolitionist: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if (i == 8)
-                        {
-                            gridString[i, j] = ("Demolition Expert: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-                        else if (i == 9)
-                        {
-                            gridString[i, j] = ("Crypto Miner: ");
-                            gridType[i, j] = RenderGridTypes.GridAgents;
-                        }
-
+                        gridString[i, j] = "[" + ((int)(i + 11) % 10) + "]";
+                        gridType[i, j] = RenderGridTypes.GridString;
                     }
 
                     #endregion
@@ -194,6 +149,114 @@ namespace Source
                     {
                         gridString[i, j] = "Price: ";
                         gridType[i, j] = RenderGridTypes.GridPrice;
+                    }
+
+                    #endregion
+
+                    // Write agents count column.
+                    #region
+
+                    if (j == 4)
+                    {
+                        if (i == 0)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 1)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 2)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 3)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 4)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 5)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 6)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 7)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 8)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                        else if (i == 9)
+                        {
+                            gridType[i, j] = RenderGridTypes.GridAgents;
+                        }
+                    }
+
+                    #endregion
+
+                    // Write agents label column.
+                    #region
+
+                    if (j == 5)
+                    {
+                        if (i == 0)
+                        {
+                            gridString[i, j] = ("Stone Harvester");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 1)
+                        {
+                            gridString[i, j] = ("Coal Miner");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 2)
+                        {
+                            gridString[i, j] = ("Iron Miner");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 3)
+                        {
+                            gridString[i, j] = ("Drill Operator");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 4)
+                        {
+                            gridString[i, j] = ("Steel Drill Operator");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 5)
+                        {
+                            gridString[i, j] = ("Diamond Drill Operator");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 6)
+                        {
+                            gridString[i, j] = ("Blast Miner");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 7)
+                        {
+                            gridString[i, j] = ("Demolitionist");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 8)
+                        {
+                            gridString[i, j] = ("Demolition Expert");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
+                        else if (i == 9)
+                        {
+                            gridString[i, j] = ("Crypto Miner");
+                            gridType[i, j] = RenderGridTypes.GridString;
+                        }
                     }
 
                     #endregion
@@ -246,7 +309,7 @@ namespace Source
                             Console.ForegroundColor = ConsoleColor.White; // Reset color
                             Console.Write(tempStr);
 
-                            if (gamePoints.IsGreater(agentPrice[rowIterate]))
+                            if (gamePoints.IsGreaterThan(agentPrice[rowIterate]))
                             {
                                 // If the player can afford this agent.
                                 if (rowIterate == optimalAgent)

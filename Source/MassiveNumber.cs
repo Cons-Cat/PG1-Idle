@@ -39,8 +39,8 @@ namespace Source
                 echelon += (int)(power % 3);
             }
 
-            // If the ones place is empty:
-            while (evalString[0] == '0' && evalString.Length == 1)
+            // If the ones place is empty AND the MassiveNumber is not equivalent to 0:
+            while (evalString[0] == '0' && evalString.Length == 1 && value != 0)
             {
                 power += 1;
 
@@ -95,14 +95,21 @@ namespace Source
                     returnStr = " Q";
                     break;
 
+                case 0:
+                    // Erratic case when value > 0 && value < 1.
+                    returnStr = "";
+                    value = 0;
+                    break;
+
                 default:
                     // Generic abbreviation for quintillion onwards.
                     returnStr = " e" + (echelon * 3).ToString();
+
                     break;
             }
 
             // Do not show decimal places on the first echelon.
-            if (echelon == 1)
+            if (returnStr == "") // echelon = 0 OR echelon = 1
             {
                 returnStr = ((uint)value).ToString() + returnStr;
             }
@@ -126,24 +133,34 @@ namespace Source
         // Subtraction operation:
         public double Sub(double argDouble, int argEchelon)
         {
-            return value - (argDouble * Math.Pow(1000, argEchelon - this.echelon));
+            double returnVal = value - (argDouble * Math.Pow(1000, argEchelon - this.echelon));
+
+            if (returnVal < 0)
+            {
+                returnVal = 0;
+            }
+
+            return returnVal;
         }
 
         // Multiplication operation:
         public double Mult(double argDouble, double argEchelon)
         {
+            Debug.WriteLine("M");
             return value * (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         public double Div(double argDouble, int argEchelon)
         {
+            Debug.WriteLine("D");
             return value / (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         // Exponentiation operation:
         public MassiveNumber Pow(double argExponent)
         {
-            // Instantiate and initialize variables
+            Debug.WriteLine("P");
+            // Instantiate and initialize variables.
             MassiveNumber returnNumber = new MassiveNumber();
             returnNumber.value = 1;
             returnNumber.echelon = 1;
@@ -217,11 +234,11 @@ namespace Source
         }
 
         // Relationship operation:
-        public bool IsGreater(MassiveNumber argNum)
+        public bool IsGreaterThan(MassiveNumber argNum)
         {
             bool returnBool;
 
-            if ((this.echelon > argNum.echelon) || (this.echelon == argNum.echelon && this.value >= argNum.value))
+            if ((this.echelon > argNum.echelon) || (this.echelon == argNum.echelon && this.value >= argNum.value) || (this.echelon == 1 && argNum.echelon == 1 && (uint)this.value == (uint)argNum.value))
             {
                 returnBool = true;
             }

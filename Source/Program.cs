@@ -9,24 +9,36 @@ namespace Source
 {
     class Program
     {
-        public static bool exitcheck = false; // checker for killing threads
         // Instantiation
         static Agent[] agentObjsArr = new Agent[10]; // 10 agents
-        static RenderWindow renderObj = new RenderWindow(9, 3); // 10 rows, 4 columns
+        static RenderWindow renderObj = new RenderWindow(9, 5); // 10 rows, 6 columns
 
         static public int SharedResource { get; set; }
-        static public object _locker = 0;
+        static public object raceConditionLocker = 0;
+        static public bool exitCheck; // checker for killing threads;
 
         static class GameOperator
         {
-            static public MassiveNumber gamePoints = new MassiveNumber(); // { get; set; }
+            static public MassiveNumber gamePoints = new MassiveNumber();
 
-            // Update the game console
+            // Update the game console.
             static public void UpdateConsole()
             {
-                // Update the renderer"s points.
-                RenderWindow.gamePoints = GameOperator.gamePoints;
+                // Update the renderer's points.
+                RenderWindow.gamePoints = gamePoints;
                 renderObj.RenderLoop();
+            }
+
+            static public void UnlockAgents()
+            {
+                // Attempt to unlock every locked agent.
+                foreach (Agent a in agentObjsArr)
+                {
+                    if (a.isLocked)
+                    {
+                        a.Unlock(gamePoints);
+                    }
+                }
             }
         }
 
@@ -40,30 +52,36 @@ namespace Source
                 // Loop through all agents
                 for (uint i = 0; i < 10; i++)
                 {
-                    GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.value, agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
+                    if (!agentObjsArr[i].isLocked)
+                    {
+                        GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.value, agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
 
-                    RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
-                    RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
-                    RenderWindow.agentPointsRate[i] = (agentObjsArr[i].pointsRate);
+                        RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
+                        RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
+                        RenderWindow.agentPointsRate[i] = (agentObjsArr[i].pointsRate);
+                    }
                 }
 
                 RenderWindow.gamePoints = GameOperator.gamePoints;
                 GameOperator.gamePoints.UpdateEchelon();
 
-                // Prevent both threads from updating simultaneously.
-                lock (_locker)
+                lock (raceConditionLocker)
                 {
+                    // Attempt to update the console.
                     GameOperator.UpdateConsole();
                     SharedResource++;
+
+                    // Attempt to unlock every locked agent.
+                    GameOperator.UnlockAgents();
+                }
+
+                if (Program.exitCheck)
+                {
+                    break;
                 }
 
                 // Loop every second.
                 Thread.Sleep(1000);
-
-                if (Program.exitcheck == true)
-                {
-                    break;
-                }
             }
         }
 
@@ -89,7 +107,7 @@ namespace Source
                     MassiveNumber agentCost = agentObjsArr[inputIndex].GetPrice();
 
                     // If the player has sufficient points
-                    if (GameOperator.gamePoints.IsGreater(agentCost))
+                    if (GameOperator.gamePoints.IsGreaterThan(agentCost))
                     {
                         // Increment the agent that the user inputs.
                         agentObjsArr[inputIndex].agentCount.value = agentObjsArr[inputIndex].agentCount.Add(1, 1);
@@ -103,14 +121,6 @@ namespace Source
                         GameOperator.gamePoints.value = GameOperator.gamePoints.Sub(agentCost.value, agentCost.echelon);
                         GameOperator.gamePoints.UpdateEchelon();
                     }
-                    else
-                    {
-                        // Clear the user input line.
-                        Console.SetCursorPosition(0, Console.CursorTop);
-
-                        // Don"t bother executing UpdateConsole(), since no value changed.
-                        continue;
-                    }
                 }
                 else
                 {
@@ -120,25 +130,25 @@ namespace Source
                             GameOperator.gamePoints.value = GameOperator.gamePoints.Add(1, 1);
                             GameOperator.gamePoints.UpdateEchelon();
 
-                            RenderWindow.gamePoints = GameOperator.gamePoints;
+                            // Attempt to unlock every locked agent.
+                            GameOperator.UnlockAgents();
 
                             break;
 
                         case ConsoleKey.X:
-                            Console.Clear();
-                            exitcheck = true;
-                           // Console.WriteLine("Thanks for playing! Your final score is: " + GameOperator.gamePoints);
+                            exitCheck = true;
 
                             break;
                     }
-                    if (Program.exitcheck == true)
+
+                    if (Program.exitCheck)
                     {
                         break;
                     }
                 }
 
                 // Prevent both threads from updating simultaneously.
-                lock (_locker)
+                lock (raceConditionLocker)
                 {
                     GameOperator.UpdateConsole();
                     SharedResource--;
@@ -146,21 +156,22 @@ namespace Source
 
                 Thread.Sleep(100);
             }
-            if (Program.exitcheck == true)
+
+            if (Program.exitCheck)
             {
+                Console.Clear();
                 Console.WriteLine("Thank you for playing! Your final total of money earned was: " + GameOperator.gamePoints.GetAbbreviation());
                 Console.ReadKey();
             }
-        }
-        public static void Gamekill()
-        {
-         
         }
 
         #endregion
 
         static void Main()
         {
+            // Initialize the exit condition.
+            exitCheck = false;
+
             // Initialize ten agents.
             agentObjsArr[0] = new Agent(1, 10, 1.0275);
             agentObjsArr[1] = new Agent(2.5, 30, 1.03);
@@ -168,23 +179,30 @@ namespace Source
             agentObjsArr[3] = new Agent(10, 150, 1.04);
             agentObjsArr[4] = new Agent(20, 350, 1.0425);
             agentObjsArr[5] = new Agent(45, 500, 1.044);
-            agentObjsArr[6] = new Agent(85, 1000, 1.05);
-            agentObjsArr[7] = new Agent(150, 2000, 1.055);
-            agentObjsArr[8] = new Agent(250, 3500, 1.06);
+            agentObjsArr[6] = new Agent(85, 1000, 1.5);
+            agentObjsArr[7] = new Agent(150, 2000, 1.55);
+            agentObjsArr[8] = new Agent(250, 3500, 1.6);
             agentObjsArr[9] = new Agent(300, 5000, 1.65);
 
             // Initial console draw.
+            //GameOperator.gamePoints.value = 0;
+            //GameOperator.gamePoints.echelon = 1;
+
+            for (int i = 0; i < agentObjsArr.Length; i++)
+            {
+                RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
+            }
+
             GameOperator.UpdateConsole();
 
             // Instantiate threads.
-            ThreadStart gameLoop = new ThreadStart(GameLoop);
+            /*ThreadStart gameLoop = new ThreadStart(GameLoop);
             Thread myGameLoop = new Thread(gameLoop);
             myGameLoop.Start();
-
+            */
             ThreadStart inputLoop = new ThreadStart(PlayerInput);
             Thread myInputLoop = new Thread(inputLoop);
             myInputLoop.Start();
-
         }
     }
 }
