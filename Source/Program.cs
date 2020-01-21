@@ -151,7 +151,7 @@ namespace Source
             agentObjsArr[6] = new Agent(85, 1000, 1.05);
             agentObjsArr[7] = new Agent(150, 2000, 1.055);
             agentObjsArr[8] = new Agent(250, 3500, 1.06);
-            agentObjsArr[9] = new Agent(300, 5000, 4);
+            agentObjsArr[9] = new Agent(300, 5000, 2.5);
 
             // Initial console draw.
             GameOperator.UpdateConsole();

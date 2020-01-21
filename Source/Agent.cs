@@ -34,7 +34,9 @@ namespace Source
             // Do not scale the first agent to purchase.
             if (agentCount.value > 0)
             {
+                // DO NOT DELETE LINE
                 //tempNum.value = tempNum.Mult(agentCount.value + 1, agentCount.echelon);
+
                 if (initPrice == 5000)
                 {
                     tempNum = tempNum.Pow(priceFactor, true);
