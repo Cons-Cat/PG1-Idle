@@ -130,7 +130,7 @@ namespace Source
         }
 
         // Multiplication operation:
-        public double Mult(double argDouble, int argEchelon)
+        public double Mult(double argDouble, double argEchelon)
         {
             return value * (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
@@ -140,9 +140,54 @@ namespace Source
         }
 
         // Exponentiation operation:
-        public double Pow(double argExponent)
+        public MassiveNumber Pow(double argExponent, bool argDebug)
         {
-            return Math.Pow(value, argExponent);
+            MassiveNumber returnNumber = this;
+            returnNumber.UpdateEchelon();
+
+            MassiveNumber fractionNumber = returnNumber;
+            double fractionExpo = argExponent % 1d;
+
+            // If the exponent is not an integer.
+            /*if (fractionExpo > 0)
+            {
+                // (x*1,000) ^ y = (x)^y * (10^3)^y
+                fractionNumber.value = Math.Pow(fractionNumber.value, fractionExpo);
+                fractionNumber.value *= Math.Pow(Math.Pow(10, fractionNumber.echelon + 1), fractionExpo);
+                fractionNumber.UpdateEchelon();
+            }*/
+
+            for (uint i = 1; i < (uint)argExponent; i++)
+            {
+                // x^4 = ( x*x*x*x )
+                returnNumber.value = returnNumber.Mult(this.value, this.echelon);
+                returnNumber.UpdateEchelon();
+
+                if (i < (uint)argExponent - 1)
+                {
+                    returnNumber.echelon *= returnNumber.echelon;
+                }
+
+                if (argDebug)
+                {
+                    Console.WriteLine("mult loop: " + i);
+                    //Console.WriteLine("echelon: " + returnNumber.echelon);
+                }
+            }
+
+            // Mult whole exponentiated value to fractional exponentiated value.
+            // This method is equivalent to:
+            // x^4.5 = ( x*x*x*x ) * ( x^0.5 )
+            //returnNumber.value = returnNumber.Mult(fractionNumber.value, 1);
+
+            if (argDebug)
+            {
+                Console.WriteLine("value: " + returnNumber.value);
+                Console.WriteLine(returnNumber.echelon);
+                Console.ReadLine();
+            }
+
+            return returnNumber;
         }
 
         // Relationship operation:

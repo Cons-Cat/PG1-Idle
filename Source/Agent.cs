@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Source
 
         public Agent(double argPointsRate, double argInitialPrice, double argPriceFactor)
         {
-            agentCount.value = 500;
+            agentCount.value = 400;
             agentCount.echelon = 2;
 
             pointsRate = argPointsRate;
@@ -27,16 +28,22 @@ namespace Source
         public MassiveNumber GetPrice()
         {
             MassiveNumber tempNum = new MassiveNumber();
-            tempNum.value = 1;
-            tempNum.value = tempNum.Mult(initPrice, 1);
+            tempNum.value = initPrice;
+            tempNum.UpdateEchelon();
 
+            // Do not scale the first agent to purchase.
             if (agentCount.value > 0)
             {
-                tempNum.value = tempNum.Mult(agentCount.value + 1, agentCount.echelon);
-                tempNum.value = tempNum.Pow(priceFactor);
+                //tempNum.value = tempNum.Mult(agentCount.value + 1, agentCount.echelon);
+                if (initPrice == 5000)
+                {
+                    tempNum = tempNum.Pow(priceFactor, true);
+                }
+                else
+                {
+                    tempNum = tempNum.Pow(priceFactor, false);
+                }
             }
-
-            tempNum.UpdateEchelon();
 
             return tempNum;
         }

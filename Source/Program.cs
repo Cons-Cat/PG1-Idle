@@ -37,7 +37,7 @@ namespace Source
             while (true)
             {
                 // Loop through all agents
-                for (int i = 0; i < 10; i++)
+                for (uint i = 0; i < 10; i++)
                 {
                     GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.value, agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
 
@@ -151,7 +151,7 @@ namespace Source
             agentObjsArr[6] = new Agent(85, 1000, 1.05);
             agentObjsArr[7] = new Agent(150, 2000, 1.055);
             agentObjsArr[8] = new Agent(250, 3500, 1.06);
-            agentObjsArr[9] = new Agent(300, 5000, 1.065);
+            agentObjsArr[9] = new Agent(300, 5000, 4);
 
             // Initial console draw.
             GameOperator.UpdateConsole();
