@@ -140,10 +140,12 @@ namespace Source
         }
 
         // Exponentiation operation:
-        public MassiveNumber Pow(double argExponent, bool argDebug)
+        public MassiveNumber Pow(double argExponent)
         {
-            MassiveNumber returnNumber = this;
-            returnNumber.UpdateEchelon();
+            // Instantiate and initialize variables
+            MassiveNumber returnNumber = new MassiveNumber();
+            returnNumber.value = 1;
+            returnNumber.echelon = 1;
 
             MassiveNumber fractionNumber = new MassiveNumber();
             fractionNumber.value = 1;
@@ -155,19 +157,25 @@ namespace Source
             if (fractionExpo > 0)
             {
                 fractionNumber.value = this.value;
-                fractionNumber.value = this.echelon;
+                fractionNumber.echelon = this.echelon;
 
                 // (x*1,000) ^ y = (x)^y * (10^3)^y
+
                 fractionNumber.value = Math.Pow(fractionNumber.value, fractionExpo);
+                fractionNumber.UpdateEchelon();
+
                 fractionNumber.value *= Math.Pow(Math.Pow(10, fractionNumber.echelon + 1), fractionExpo);
                 fractionNumber.UpdateEchelon();
             }
 
+            returnNumber.value = this.value;
+            returnNumber.echelon = this.echelon;
+
+            // x^4 = ( x*x*x*x )
             if ((uint)argExponent > 1)
             {
-                for (uint i = 1; i <= (uint)argExponent; i++)
+                for (uint i = 1; i < (uint)argExponent; i++)
                 {
-                    // x^4 = ( x*x*x*x )
                     returnNumber.value = returnNumber.Mult(this.value, this.echelon);
                     returnNumber.UpdateEchelon();
 
@@ -175,23 +183,12 @@ namespace Source
                     {
                         returnNumber.echelon *= returnNumber.echelon;
                     }
-
-                    if (argDebug)
-                    {
-                        Debug.WriteLine("mult loop: " + i);
-                        //Console.WriteLine("echelon: " + returnNumber.echelon);
-                    }
                 }
             }
             else
             {
-                if (argExponent > 1)
+                if ((uint)argExponent > 1)
                 {
-                    if (argDebug)
-                    {
-                        Debug.WriteLine("Multed once.");
-                    }
-
                     // Mult at least once
                     returnNumber.value = returnNumber.Mult(returnNumber.value, 1);
                     returnNumber.UpdateEchelon();
@@ -202,15 +199,16 @@ namespace Source
             // This method is equivalent to:
             // x^4.5 = ( x*x*x*x ) * ( x^0.5 )
 
-            returnNumber.value = returnNumber.Mult(fractionNumber.value, 1);
-            returnNumber.UpdateEchelon();
-
-            if (argDebug)
+            if (argExponent >= 1)
             {
-                Console.WriteLine("value: " + returnNumber.value);
-                Console.WriteLine(returnNumber.echelon);
-                //Console.ReadLine();
+                returnNumber.value = returnNumber.Mult(fractionNumber.value, fractionNumber.echelon);
             }
+            else
+            {
+                returnNumber.value = fractionNumber.value;
+            }
+
+            returnNumber.UpdateEchelon();
 
             return returnNumber;
         }
