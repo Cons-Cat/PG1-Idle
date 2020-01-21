@@ -81,7 +81,7 @@ namespace Source
             #region
 
             columnWidth[0] = 8;
-            columnWidth[1] = 50;
+            columnWidth[1] = 35;
             columnWidth[2] = 35;
 
             for (uint i = 0; i < rowCount; i++)
