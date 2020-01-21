@@ -35,16 +35,10 @@ namespace Source
             if (agentCount.value > 0)
             {
                 tempNum.value = tempNum.Mult(agentCount.value + (1d / (agentCount.echelon * 1000)), agentCount.echelon);
-                //tempNum.value *= agentCount.value + 1;
                 tempNum.UpdateEchelon();
 
-                if (initPrice == 5000)
-                {
-                    Debug.WriteLine((1d / (agentCount.echelon * 1000)));
-                    Debug.WriteLine(tempNum.value);
-                }
-
-                tempNum = tempNum.Pow(priceFactor);
+                //tempNum = tempNum.Pow(priceFactor);
+                tempNum = tempNum.Pow(priceFactor + 1);
             }
 
             return tempNum;

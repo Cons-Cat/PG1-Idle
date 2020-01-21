@@ -161,12 +161,14 @@ namespace Source
                 fractionNumber.echelon = this.echelon;
 
                 // (x*1,000) ^ y = (x)^y * (10^3)^y
-
                 fractionNumber.value = Math.Pow(fractionNumber.value, fractionExpo);
                 fractionNumber.UpdateEchelon();
 
-                fractionNumber.value *= Math.Pow(Math.Pow(10, fractionNumber.echelon + 1), fractionExpo);
-                fractionNumber.UpdateEchelon();
+                for (int i = 0; i < fractionNumber.echelon + 1; i++)
+                {
+                    fractionNumber.value *= Math.Pow(10, fractionExpo);
+                    fractionNumber.UpdateEchelon();
+                }
             }
 
             returnNumber.value = this.value;
