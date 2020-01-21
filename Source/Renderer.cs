@@ -212,7 +212,6 @@ namespace Source
                             else
                             {
                                 // If the player cannot afford this agent.
-                                // If the player can afford this agent.
                                 if (rowIterate == optimalAgent)
                                 {
                                     // If this is the most cost efficient agent.

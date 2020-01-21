@@ -56,6 +56,7 @@ namespace Source
                     SharedResource++;
                 }
 
+                // Loop every second.
                 Thread.Sleep(1000);
             }
         }

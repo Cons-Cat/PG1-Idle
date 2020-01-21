@@ -22,28 +22,38 @@ namespace Source
 
         public void UpdateEchelon()
         {
-            double tempValue = value;
             double decimalShift = 0;
+            string evalString = ((uint)value).ToString();
+            double power = 0;
 
             // If the one-thousands place is not empty:
-            if (((uint)value).ToString().Length >= 4)
+            if (evalString.Length >= 4)
             {
+                power = (evalString.Length - 1) / 3;
+
                 // Decrement the decimal place in multiples of 3.
-                decimalShift = Math.Pow(1000, (((uint)value).ToString().Length) % 3);
-                tempValue /= decimalShift;
+                decimalShift = Math.Pow(1000, power);
+                value /= decimalShift;
 
                 // Increment the echelon by 1 for each shift of 3 in the decimal place.
-                echelon += (int)decimalShift % 3;
-
-                // Update value with 6 decimal precision
-                //value = Math.Truncate(tempValue * 600) / 600;
-                value = tempValue;
+                echelon += (int)(power % 3);
             }
 
             // If the ones place is empty:
-            if (((uint)tempValue).ToString().Length == 0)
+            while (evalString[0] == '0' && evalString.Length == 1)
             {
-                // UNFINISHED
+                power += 1;
+
+                // Increment the decimal place in multiples of 3.
+                if (power == 3)
+                {
+                    power = 0;
+                    value *= 1000;
+                    echelon--;
+                }
+
+                // Update evalString for loop condition.
+                evalString = ((uint)value).ToString();
             }
         }
 
@@ -86,12 +96,22 @@ namespace Source
                     break;
 
                 default:
-                    // Generic abbreviation from quintillion onwards.
+                    // Generic abbreviation for quintillion onwards.
                     returnStr = " e" + (echelon * 3).ToString();
                     break;
             }
 
-            return ((uint)value).ToString() + returnStr;
+            // Do not show decimal places on the first echelon.
+            if (echelon == 1)
+            {
+                returnStr = ((uint)value).ToString() + returnStr;
+            }
+            else
+            {
+                returnStr = (Math.Truncate(value * 1000) / 1000).ToString() + returnStr;
+            }
+
+            return returnStr;
         }
 
         // Math operations:
@@ -132,9 +152,6 @@ namespace Source
 
             if ((this.echelon > argNum.echelon) || (this.echelon == argNum.echelon && this.value >= argNum.value))
             {
-                /*Debug.WriteLine(this.echelon);
-                Debug.WriteLine(argNum.echelon);
-                Debug.WriteLine("");*/
                 returnBool = true;
             }
             else
