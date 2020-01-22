@@ -146,20 +146,17 @@ namespace Source
         // Multiplication operation:
         public double Mult(double argDouble, double argEchelon)
         {
-            Debug.WriteLine("M");
             return value * (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         public double Div(double argDouble, int argEchelon)
         {
-            Debug.WriteLine("D");
             return value / (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
         // Exponentiation operation:
         public MassiveNumber Pow(double argExponent)
         {
-            Debug.WriteLine("P");
             // Instantiate and initialize variables.
             MassiveNumber returnNumber = new MassiveNumber();
             returnNumber.value = 1;

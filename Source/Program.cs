@@ -32,11 +32,12 @@ namespace Source
             static public void UnlockAgents()
             {
                 // Attempt to unlock every locked agent.
-                foreach (Agent a in agentObjsArr)
+                for (int i = 0; i < agentObjsArr.Length; i++)
                 {
-                    if (a.isLocked)
+                    if (agentObjsArr[i].isLocked)
                     {
-                        a.Unlock(gamePoints);
+                        agentObjsArr[i].Unlock(gamePoints);
+                        RenderWindow.agentIsLocked[i] = agentObjsArr[i].isLocked;
                     }
                 }
             }
@@ -185,9 +186,6 @@ namespace Source
             agentObjsArr[9] = new Agent(300, 5000, 1.65);
 
             // Initial console draw.
-            //GameOperator.gamePoints.value = 0;
-            //GameOperator.gamePoints.echelon = 1;
-
             for (int i = 0; i < agentObjsArr.Length; i++)
             {
                 RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
@@ -196,10 +194,10 @@ namespace Source
             GameOperator.UpdateConsole();
 
             // Instantiate threads.
-            /*ThreadStart gameLoop = new ThreadStart(GameLoop);
+            ThreadStart gameLoop = new ThreadStart(GameLoop);
             Thread myGameLoop = new Thread(gameLoop);
             myGameLoop.Start();
-            */
+
             ThreadStart inputLoop = new ThreadStart(PlayerInput);
             Thread myInputLoop = new Thread(inputLoop);
             myInputLoop.Start();
