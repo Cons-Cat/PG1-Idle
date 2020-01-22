@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Agent.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="Upgrade.cs" />
     <Compile Include="MassiveNumber.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Program.cs" />

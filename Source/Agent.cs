@@ -8,13 +8,9 @@ using System.Threading.Tasks;
 namespace Source
 {
     // Agent object behavior
-    public class Agent
+    public class Agent : Item
     {
         public double pointsRate { get; set; }                  // Arbitrary rate that this agent index generates points.
-        public double initPrice { get; set; }                   // Arbitrary price to scale by priceFactor.
-        public double priceFactor { get; set; }                 // Arbitrary scaling of initPrice.
-
-        public MassiveNumber agentCount = new MassiveNumber();  // Arbitrary count of this agent. Used as a multiplier for pointsRate and priceFactor.
         public MassiveNumber unlockScore = new MassiveNumber();
         public bool isLocked;
 
@@ -23,8 +19,8 @@ namespace Source
             // Initialize variables
 
             // Change these for testing:
-            agentCount.value = 0;
-            agentCount.echelon = 1;
+            count.value = 10;
+            count.echelon = 1;
 
             // Progression scaling:
             pointsRate = argPointsRate;
@@ -36,24 +32,6 @@ namespace Source
             unlockScore.UpdateEchelon();
 
             isLocked = true;
-        }
-
-        public MassiveNumber GetPrice()
-        {
-            MassiveNumber tempNum = new MassiveNumber();
-            tempNum.value = initPrice;
-            tempNum.UpdateEchelon();
-
-            // Do not scale the first agent to purchase.
-            if (agentCount.value > 0)
-            {
-                tempNum.value = tempNum.Mult(agentCount.value + (1d / (agentCount.echelon * 1000)), agentCount.echelon);
-                tempNum.UpdateEchelon();
-
-                tempNum = tempNum.Pow(priceFactor);
-            }
-
-            return tempNum;
         }
 
         public void Unlock(MassiveNumber argPoints)

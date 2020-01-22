@@ -11,34 +11,31 @@ namespace Source
     {
         // Instantiation
         static Agent[] agentObjsArr = new Agent[10]; // 10 agents
+        static Upgrade[] upgraObjsArr = new Upgrade[10]; // 10 upgrades
         static RenderWindow renderObj = new RenderWindow(9, 5); // 10 rows, 6 columns
 
         static public int SharedResource { get; set; }
         static public object raceConditionLocker = 0;
         static public bool exitCheck; // checker for killing threads;
+        static public MassiveNumber gamePoints = new MassiveNumber();
 
-        static class GameOperator
+        // Update the game console.
+        static public void UpdateConsole()
         {
-            static public MassiveNumber gamePoints = new MassiveNumber();
+            // Update the renderer's points.
+            RenderWindow.gamePoints = gamePoints;
+            renderObj.RenderLoop();
+        }
 
-            // Update the game console.
-            static public void UpdateConsole()
+        static public void UnlockAgents()
+        {
+            // Attempt to unlock every locked agent.
+            for (int i = 0; i < agentObjsArr.Length; i++)
             {
-                // Update the renderer's points.
-                RenderWindow.gamePoints = gamePoints;
-                renderObj.RenderLoop();
-            }
-
-            static public void UnlockAgents()
-            {
-                // Attempt to unlock every locked agent.
-                for (int i = 0; i < agentObjsArr.Length; i++)
+                if (agentObjsArr[i].isLocked)
                 {
-                    if (agentObjsArr[i].isLocked)
-                    {
-                        agentObjsArr[i].Unlock(gamePoints);
-                        RenderWindow.agentIsLocked[i] = agentObjsArr[i].isLocked;
-                    }
+                    agentObjsArr[i].Unlock(gamePoints);
+                    RenderWindow.agentIsLocked[i] = agentObjsArr[i].isLocked;
                 }
             }
         }
@@ -48,37 +45,32 @@ namespace Source
 
         static void GameLoop()
         {
-            while (true)
+            while (!exitCheck)
             {
                 // Loop through all agents
                 for (uint i = 0; i < 10; i++)
                 {
                     if (!agentObjsArr[i].isLocked)
                     {
-                        GameOperator.gamePoints.value = GameOperator.gamePoints.Add(agentObjsArr[i].agentCount.value, agentObjsArr[i].agentCount.echelon); // Point incrementing algorithm.
+                        gamePoints.value = gamePoints.Add(agentObjsArr[i].count.value, agentObjsArr[i].count.echelon); // Point incrementing algorithm.
 
-                        RenderWindow.agentCount[i] = agentObjsArr[i].agentCount;
+                        RenderWindow.agentCount[i] = agentObjsArr[i].count;
                         RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
                         RenderWindow.agentPointsRate[i] = (agentObjsArr[i].pointsRate);
                     }
                 }
 
-                RenderWindow.gamePoints = GameOperator.gamePoints;
-                GameOperator.gamePoints.UpdateEchelon();
+                RenderWindow.gamePoints = gamePoints;
+                gamePoints.UpdateEchelon();
 
                 lock (raceConditionLocker)
                 {
                     // Attempt to update the console.
-                    GameOperator.UpdateConsole();
+                    UpdateConsole();
                     SharedResource++;
 
                     // Attempt to unlock every locked agent.
-                    GameOperator.UnlockAgents();
-                }
-
-                if (Program.exitCheck)
-                {
-                    break;
+                    UnlockAgents();
                 }
 
                 // Loop every second.
@@ -93,7 +85,7 @@ namespace Source
 
         static void PlayerInput()
         {
-            while (true)
+            while (!exitCheck)
             {
                 int inputIndex;
 
@@ -104,23 +96,43 @@ namespace Source
                 {
                     // Get array index from digit input.
                     inputIndex = (int)(Char.GetNumericValue(playerInput.KeyChar) + 9) % 10;
+                    MassiveNumber itemCost = new MassiveNumber();
 
-                    MassiveNumber agentCost = agentObjsArr[inputIndex].GetPrice();
+                    if (RenderWindow.currentMenuInd == 1)
+                    {
+                        itemCost = agentObjsArr[inputIndex].GetPrice();
+                    }
+                    else if (RenderWindow.currentMenuInd == 2)
+                    {
+                        itemCost = upgraObjsArr[inputIndex].GetPrice();
+                    }
 
                     // If the player has sufficient points
-                    if (GameOperator.gamePoints.IsGreaterThan(agentCost))
+                    if (gamePoints.IsGreaterThan(itemCost))
                     {
-                        // Increment the agent that the user inputs.
-                        agentObjsArr[inputIndex].agentCount.value = agentObjsArr[inputIndex].agentCount.Add(1, 1);
-                        agentObjsArr[inputIndex].agentCount.UpdateEchelon();
-
                         // Update the console values.
-                        RenderWindow.agentCount[inputIndex] = agentObjsArr[inputIndex].agentCount;
-                        RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
+                        if (RenderWindow.currentMenuInd == 1)
+                        {
+                            // Increment the agent that the user inputs.
+                            agentObjsArr[inputIndex].count.value = agentObjsArr[inputIndex].count.Add(1, 1);
+                            agentObjsArr[inputIndex].count.UpdateEchelon();
+
+                            RenderWindow.agentCount[inputIndex] = agentObjsArr[inputIndex].count;
+                            RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
+                        }
+                        else if (RenderWindow.currentMenuInd == 2)
+                        {
+                            // Increment the upgrade that the user inputs.
+                            upgraObjsArr[inputIndex].count.value = upgraObjsArr[inputIndex].count.Add(1, 1);
+                            upgraObjsArr[inputIndex].count.UpdateEchelon();
+
+                            RenderWindow.upgraCount[inputIndex] = upgraObjsArr[inputIndex].count;
+                            RenderWindow.upgraPrice[inputIndex] = upgraObjsArr[inputIndex].GetPrice();
+                        }
 
                         // Decrease the player's points bank.
-                        GameOperator.gamePoints.value = GameOperator.gamePoints.Sub(agentCost.value, agentCost.echelon);
-                        GameOperator.gamePoints.UpdateEchelon();
+                        gamePoints.value = gamePoints.Sub(itemCost.value, itemCost.echelon);
+                        gamePoints.UpdateEchelon();
                     }
                 }
                 else
@@ -128,12 +140,20 @@ namespace Source
                     switch (playerInput.Key)
                     {
                         case ConsoleKey.Spacebar:
-                            GameOperator.gamePoints.value = GameOperator.gamePoints.Add(1, 1);
-                            GameOperator.gamePoints.UpdateEchelon();
+                            gamePoints.value = gamePoints.Add(1, 1);
+                            gamePoints.UpdateEchelon();
 
                             // Attempt to unlock every locked agent.
-                            GameOperator.UnlockAgents();
+                            UnlockAgents();
 
+                            break;
+
+                        case ConsoleKey.RightArrow:
+                            RenderWindow.ChangeMenu(RenderWindow.currentMenuInd + 1);
+                            break;
+
+                        case ConsoleKey.LeftArrow:
+                            RenderWindow.ChangeMenu(RenderWindow.currentMenuInd - 1);
                             break;
 
                         case ConsoleKey.X:
@@ -141,27 +161,22 @@ namespace Source
 
                             break;
                     }
-
-                    if (Program.exitCheck)
-                    {
-                        break;
-                    }
                 }
 
                 // Prevent both threads from updating simultaneously.
                 lock (raceConditionLocker)
                 {
-                    GameOperator.UpdateConsole();
+                    UpdateConsole();
                     SharedResource--;
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(150);
             }
 
-            if (Program.exitCheck)
+            if (exitCheck)
             {
                 Console.Clear();
-                Console.WriteLine("Thank you for playing! Your final total of money earned was: " + GameOperator.gamePoints.GetAbbreviation());
+                Console.WriteLine("Thank you for playing! Your final total of money earned was: " + gamePoints.GetAbbreviation());
                 Console.ReadKey();
             }
         }
@@ -185,13 +200,26 @@ namespace Source
             agentObjsArr[8] = new Agent(250, 3500, 1.6);
             agentObjsArr[9] = new Agent(300, 5000, 1.65);
 
+            // Initialize ten upgrades.
+            upgraObjsArr[0] = new Upgrade(1, 100, 2);
+            upgraObjsArr[1] = new Upgrade(2.5, 300, 2);
+            upgraObjsArr[2] = new Upgrade(5, 700, 2);
+            upgraObjsArr[3] = new Upgrade(10, 1500, 2);
+            upgraObjsArr[4] = new Upgrade(20, 3500, 2);
+            upgraObjsArr[5] = new Upgrade(45, 5000, 2);
+            upgraObjsArr[6] = new Upgrade(85, 10000, 2);
+            upgraObjsArr[7] = new Upgrade(150, 20000, 2);
+            upgraObjsArr[8] = new Upgrade(250, 35000, 1.75);
+            upgraObjsArr[9] = new Upgrade(300, 50000, 1.5);
+
             // Initial console draw.
             for (int i = 0; i < agentObjsArr.Length; i++)
             {
                 RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
+                RenderWindow.upgraPrice[i] = upgraObjsArr[i].GetPrice();
             }
 
-            GameOperator.UpdateConsole();
+            UpdateConsole();
 
             // Instantiate threads.
             ThreadStart gameLoop = new ThreadStart(GameLoop);
