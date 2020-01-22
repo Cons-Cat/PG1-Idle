@@ -21,9 +21,11 @@ namespace Source
         int[] columnWidth;
         uint columnCount;
         uint rowCount;
-        //public static MassiveNumber displayPoints { get; set; }
 
-        string[,] gridString;
+        string[,,] gridString;
+        uint[,] gridStringCount;
+        ConsoleColor[,,] gridStringColor;
+
         uint[,] gridValue;
         bool[,] gridHasVal;
         bool[,] gridIsStatic;
@@ -53,7 +55,10 @@ namespace Source
             // Declare arrays:
             #region
 
-            gridString = new string[rowCount, columnCount];
+            gridString = new string[rowCount, columnCount, 3];
+            gridStringCount = new uint[rowCount, columnCount];
+            gridStringColor = new ConsoleColor[rowCount, columnCount, 3];
+
             gridValue = new uint[rowCount, columnCount];
             gamePoints = new MassiveNumber();
             displayPoints = new MassiveNumber();
@@ -91,13 +96,25 @@ namespace Source
             columnWidth[4] = 17;    // Agent Price
                                     // Agent Label
 
+            for (int i = 0; i < gridStringColor.GetLength(0); i++)
+            {
+                for (int j = 0; j < gridStringColor.GetLength(1); j++)
+                {
+                    for (int k = 0; k < gridStringColor.GetLength(2); k++)
+                    {
+                        gridStringColor[i, j, k] = ConsoleColor.White;
+                    }
+                }
+            }
+
             for (uint i = 0; i < rowCount; i++)
             {
                 for (uint j = 0; j < columnCount; j++)
                 {
                     // Default to blank grid.
-                    gridString[i, j] = "";
+                    gridStringCount[i, j] = 0;
                     gridType[i, j] = RenderGridTypes.GridEmpty;
+                    gridString[i, j, 0] = "";
 
                     // Write info
                     #region
@@ -105,12 +122,16 @@ namespace Source
                     if (j == 0 && i == 0)
                     {
                         gridType[i, j] = RenderGridTypes.GridString;
-                        gridString[i, j] = "Exit: X";
+                        gridStringColor[i, j, 1] = ConsoleColor.Gray;
+                        gridStringCount[i, j] = 1;
+
+                        gridString[i, j, 0] = "Exit: ";
+                        gridString[i, j, 1] = "X";
                     }
 
                     #endregion
 
-                    // Write leftmost column.
+                    // Write legend column.
                     #region
 
                     if (j == 1)
@@ -119,17 +140,26 @@ namespace Source
                         if (i == rowCount / 2 - 1)
                         {
                             gridType[i, j] = RenderGridTypes.GridPoints;
-                            gridString[i, j] = "Dollars: ";
+                            gridString[i, j, 0] = "Dollars: ";
                         }
                         else if (i == rowCount / 2)
                         {
                             gridType[i, j] = RenderGridTypes.GridString;
-                            gridString[i, j] = "Press Spacebar to dig";
+                            gridStringColor[i, j, 1] = ConsoleColor.Cyan;
+                            gridStringCount[i, j] = 2;
+
+                            gridString[i, j, 0] = "Press ";
+                            gridString[i, j, 1] = "Spacebar";
+                            gridString[i, j, 2] = " to dig";
                         }
                         else if (i == rowCount / 2 + 1)
                         {
                             gridType[i, j] = RenderGridTypes.GridString;
-                            gridString[i, j] = "Press Shift";
+                            gridStringColor[i, j, 1] = ConsoleColor.Cyan;
+                            gridStringCount[i, j] = 1;
+
+                            gridString[i, j, 0] = "Press ";
+                            gridString[i, j, 1] = "Shift";
                         }
                     }
 
@@ -140,8 +170,14 @@ namespace Source
 
                     if (j == 2)
                     {
-                        gridString[i, j] = "[" + ((int)(i + 11) % 10) + "]";
                         gridType[i, j] = RenderGridTypes.GridString;
+                        gridStringColor[i, j, 0] = ConsoleColor.Gray;
+                        gridStringColor[i, j, 2] = ConsoleColor.Gray;
+                        gridStringCount[i, j] = 2;
+
+                        gridString[i, j, 0] = "[";
+                        gridString[i, j, 1] = "" + ((int)(i + 11) % 10);
+                        gridString[i, j, 2] = "]";
                     }
 
                     #endregion
@@ -151,7 +187,7 @@ namespace Source
 
                     if (j == 3)
                     {
-                        gridString[i, j] = "Price: ";
+                        gridString[i, j, 0] = "Price: ";
                         gridType[i, j] = RenderGridTypes.GridPrice;
                     }
 
@@ -213,52 +249,52 @@ namespace Source
                     {
                         if (i == 0)
                         {
-                            gridString[i, j] = ("Stone Harvester");
+                            gridString[i, j, 0] = ("Stone Harvester");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 1)
                         {
-                            gridString[i, j] = ("Coal Miner");
+                            gridString[i, j, 0] = ("Coal Miner");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 2)
                         {
-                            gridString[i, j] = ("Iron Miner");
+                            gridString[i, j, 0] = ("Iron Miner");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 3)
                         {
-                            gridString[i, j] = ("Drill Operator");
+                            gridString[i, j, 0] = ("Drill Operator");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 4)
                         {
-                            gridString[i, j] = ("Steel Drill Operator");
+                            gridString[i, j, 0] = ("Steel Drill Operator");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 5)
                         {
-                            gridString[i, j] = ("Diamond Drill Operator");
+                            gridString[i, j, 0] = ("Diamond Drill Operator");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 6)
                         {
-                            gridString[i, j] = ("Blast Miner");
+                            gridString[i, j, 0] = ("Blast Miner");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 7)
                         {
-                            gridString[i, j] = ("Demolitionist");
+                            gridString[i, j, 0] = ("Demolitionist");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 8)
                         {
-                            gridString[i, j] = ("Demolition Expert");
+                            gridString[i, j, 0] = ("Demolition Expert");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                         else if (i == 9)
                         {
-                            gridString[i, j] = ("Crypto Miner");
+                            gridString[i, j, 0] = ("Crypto Miner");
                             gridType[i, j] = RenderGridTypes.GridAgentLabel;
                         }
                     }
@@ -284,12 +320,12 @@ namespace Source
                 // Write each column of this row.
                 for (uint columnIterate = 0; columnIterate < columnCount; columnIterate++)
                 {
-                    tempStr = gridString[rowIterate, columnIterate];
+                    tempStr = gridString[rowIterate, columnIterate, 0];
 
                     switch (gridType[rowIterate, columnIterate])
                     {
                         case RenderGridTypes.GridEmpty:
-                            Console.Write(gridString[rowIterate, columnIterate].PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
+                            Console.Write(gridString[rowIterate, columnIterate, 0].PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
                             break;
 
                         case RenderGridTypes.GridPoints:
@@ -301,7 +337,23 @@ namespace Source
                             break;
 
                         case RenderGridTypes.GridString:
-                            Console.Write(gridString[rowIterate, columnIterate].PadRight(columnWidth[columnIterate], ' '));
+                            int tempStrLength = 0;
+
+                            for (uint i = 0; i <= gridStringCount[rowIterate, columnIterate]; i++)
+                            {
+                                Console.ForegroundColor = gridStringColor[rowIterate, columnIterate, i];
+
+                                if (i < gridStringCount[rowIterate, columnIterate])
+                                {
+                                    Console.Write(gridString[rowIterate, columnIterate, i]);
+                                }
+                                else
+                                {
+                                    Console.Write(gridString[rowIterate, columnIterate, i].PadRight(columnWidth[columnIterate] - tempStrLength, ' '));
+                                }
+
+                                tempStrLength += gridString[rowIterate, columnIterate, i].Length;
+                            }
 
                             break;
 
@@ -320,7 +372,7 @@ namespace Source
                             {
                                 string tempQStr = "";
 
-                                foreach (char c in gridString[rowIterate, columnIterate])
+                                foreach (char c in gridString[rowIterate, columnIterate, 0])
                                 {
                                     tempQStr += "?";
                                 }
@@ -329,7 +381,7 @@ namespace Source
                             }
                             else
                             {
-                                Console.Write(gridString[rowIterate, columnIterate].PadRight(columnWidth[columnIterate], ' '));
+                                Console.Write(gridString[rowIterate, columnIterate, 0].PadRight(columnWidth[columnIterate], ' '));
                             }
                             break;
 
