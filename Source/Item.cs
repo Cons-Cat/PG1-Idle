@@ -25,14 +25,12 @@ namespace Source
 
             if (count.value > 0)
             {
-                tempNum.value = tempNum.Mult(count.value, count.echelon);
-
+                tempNum.value = tempNum.Mult(count.value + 1, tempNum.echelon);
                 tempNum.UpdateEchelon();
 
                 tempNum = tempNum.Pow(priceFactor);
             }
 
-            tempNum.UpdateEchelon();
             price = tempNum;
             tempNum = null;
         }

@@ -9,13 +9,16 @@ namespace Source
 {
     class Upgrade : Item
     {
-        public double incomeMultiplier { get; set; }            // Arbitrary multiplier of agent income.
+        // Arbitrary multiplier of agent income.
+        public double incomeMultiplier { get; set; }
 
-        public Upgrade(double argPointsMult, double argInitialPrice, double argPriceFactor)
+        public Upgrade(double argPointsMult, double argInitialPriceVal, int argInitialPriceEch, double argPriceFactor)
         {
             // Initialize variables
             incomeMultiplier = argPointsMult;
-            initPrice.value = argInitialPrice;
+            initPrice.value = argInitialPriceVal;
+            initPrice.echelon = argInitialPriceEch;
+
             priceFactor = argPriceFactor;
 
             UpdatePrice();

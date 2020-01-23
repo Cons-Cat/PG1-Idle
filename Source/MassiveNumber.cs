@@ -218,7 +218,10 @@ namespace Source
 
             if (argExponent >= 1)
             {
-                returnNumber.value = returnNumber.Mult(fractionNumber.value, fractionNumber.echelon);
+                if (fractionExpo > 0)
+                {
+                    returnNumber.value = returnNumber.Mult(fractionNumber.value, fractionNumber.echelon);
+                }
             }
             else
             {

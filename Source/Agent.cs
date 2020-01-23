@@ -10,11 +10,11 @@ namespace Source
     // Agent object behavior
     public class Agent : Item
     {
-        public double pointsRate { get; set; }                  // Arbitrary rate that this agent index generates points.
+        public MassiveNumber pointsRate = new MassiveNumber();
         public MassiveNumber unlockScore = new MassiveNumber();
         public bool isLocked;
 
-        public Agent(double argPointsRate, double argInitialPrice, double argPriceFactor)
+        public Agent(double argPointsRate, double argInitialPriceVal, int argInitialPriceEch, double argPriceFactor)
         {
             // Initialize variables
 
@@ -23,13 +23,15 @@ namespace Source
             count.echelon = 1;
 
             // Progression scaling:
-            pointsRate = argPointsRate;
-            initPrice.value = argInitialPrice;
+            pointsRate.value = argPointsRate;
+            initPrice.value = argInitialPriceVal;
+            initPrice.echelon = argInitialPriceEch;
+
             priceFactor = argPriceFactor;
             UpdatePrice();
 
             // Bank score to unlock:
-            unlockScore.value = argInitialPrice * 0.745;    // Slightly under 3/4 of initial price.
+            unlockScore.value = argInitialPriceVal * 0.745;    // Slightly under 3/4 of initial price.
             unlockScore.UpdateEchelon();
 
             isLocked = true;

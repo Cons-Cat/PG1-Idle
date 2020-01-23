@@ -54,20 +54,25 @@ namespace Source
                     {
                         if (agentObjsArr[i].count.value > 0)
                         {
+                            MassiveNumber tempNumber = new MassiveNumber();
+
                             // Evaluate agents.
-                            gamePoints.value = (gamePoints.Add(agentObjsArr[i].count.value, agentObjsArr[i].count.echelon));
-                            gamePoints.UpdateEchelon();
+                            tempNumber.value = tempNumber.Add(agentObjsArr[i].pointsRate.Mult((agentObjsArr[i].count.value), agentObjsArr[i].count.echelon), agentObjsArr[i].pointsRate.echelon);
+                            tempNumber.UpdateEchelon();
 
                             // Evaluate upgrades.
                             if (upgraObjsArr[i].count.value > 0)
                             {
-                                gamePoints.value = gamePoints.Mult(upgraObjsArr[i].count.Mult(upgraObjsArr[i].incomeMultiplier, upgraObjsArr[i].count.echelon) + 1, 1);
-                                gamePoints.UpdateEchelon();
+                                tempNumber.value = tempNumber.Mult(upgraObjsArr[i].count.Mult(upgraObjsArr[i].incomeMultiplier, upgraObjsArr[i].count.echelon) + 1, 1);
+                                tempNumber.UpdateEchelon();
                             }
+
+                            gamePoints.value = gamePoints.Add(tempNumber.value, tempNumber.echelon);
+                            gamePoints.UpdateEchelon();
 
                             RenderWindow.agentCount[i] = agentObjsArr[i].count;
                             RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
-                            RenderWindow.agentPointsRate[i] = agentObjsArr[i].pointsRate; // Used for optimal calculation
+                            RenderWindow.agentPointsRate[i] = agentObjsArr[i].pointsRate.value; // Used for optimal calculation
                         }
                     }
                 }
@@ -138,9 +143,9 @@ namespace Source
                             // Increment the upgrade that the user inputs.
                             upgraObjsArr[inputIndex].count.value = upgraObjsArr[inputIndex].count.Add(1, 1);
                             upgraObjsArr[inputIndex].count.UpdateEchelon();
+                            upgraObjsArr[inputIndex].UpdatePrice();
 
                             RenderWindow.upgraCount[inputIndex] = upgraObjsArr[inputIndex].count;
-                            upgraObjsArr[inputIndex].UpdatePrice();
                             RenderWindow.upgraPrice[inputIndex] = upgraObjsArr[inputIndex].GetPrice();
                         }
 
@@ -203,31 +208,31 @@ namespace Source
             exitCheck = false;
 
             // Initialize ten agents.
-            agentObjsArr[0] = new Agent(1, 10, 1.0275);
-            agentObjsArr[1] = new Agent(2.5, 30, 1.03);
-            agentObjsArr[2] = new Agent(5, 70, 1.035);
-            agentObjsArr[3] = new Agent(10, 150, 1.04);
-            agentObjsArr[4] = new Agent(20, 350, 1.0425);
-            agentObjsArr[5] = new Agent(45, 500, 1.044);
-            agentObjsArr[6] = new Agent(85, 1000, 1.5);
-            agentObjsArr[7] = new Agent(150, 2000, 1.55);
-            agentObjsArr[8] = new Agent(250, 3500, 1.6);
-            agentObjsArr[9] = new Agent(300, 5000, 1.65);
+            agentObjsArr[0] = new Agent(1, 10, 1, 1.0275);
+            agentObjsArr[1] = new Agent(5, 30, 1, 1.03);
+            agentObjsArr[2] = new Agent(10, 70, 1, 1.035);
+            agentObjsArr[3] = new Agent(20, 150, 1, 1.04);
+            agentObjsArr[4] = new Agent(40, 350, 1, 1.0425);
+            agentObjsArr[5] = new Agent(90, 500, 1, 1.044);
+            agentObjsArr[6] = new Agent(150, 1, 2, 1.05);
+            agentObjsArr[7] = new Agent(250, 2, 2, 1.055);
+            agentObjsArr[8] = new Agent(500, 3.5, 2, 1.06);
+            agentObjsArr[9] = new Agent(1000, 5, 2, 1.065);
 
             // Initialize ten upgrades.
-            upgraObjsArr[0] = new Upgrade(1, 100, 2);
-            upgraObjsArr[1] = new Upgrade(2.5, 300, 2);
-            upgraObjsArr[2] = new Upgrade(5, 700, 2);
-            upgraObjsArr[3] = new Upgrade(10, 1500, 2);
-            upgraObjsArr[4] = new Upgrade(20, 3500, 2);
-            upgraObjsArr[5] = new Upgrade(45, 5000, 2);
-            upgraObjsArr[6] = new Upgrade(85, 10000, 2);
-            upgraObjsArr[7] = new Upgrade(150, 20000, 2);
-            upgraObjsArr[8] = new Upgrade(250, 35000, 1.75);
-            upgraObjsArr[9] = new Upgrade(300, 50000, 1.5);
+            upgraObjsArr[0] = new Upgrade(1, 100, 1, 2);
+            upgraObjsArr[1] = new Upgrade(2.5, 300, 1, 2);
+            upgraObjsArr[2] = new Upgrade(5, 700, 1, 2);
+            upgraObjsArr[3] = new Upgrade(10, 1.5, 2, 2);
+            upgraObjsArr[4] = new Upgrade(20, 3.5, 2, 2);
+            upgraObjsArr[5] = new Upgrade(45, 5, 2, 2);
+            upgraObjsArr[6] = new Upgrade(85, 10, 2, 2);
+            upgraObjsArr[7] = new Upgrade(150, 20, 2, 2);
+            upgraObjsArr[8] = new Upgrade(250, 35, 2, 1.75);
+            upgraObjsArr[9] = new Upgrade(300, 50, 2, 1.5);
 
             agentObjsArr[0].count.value = 10;
-            agentObjsArr[7].count.value = 1;
+            agentObjsArr[0].UpdatePrice();
 
             gamePoints.value = 10000;
             gamePoints.UpdateEchelon();
@@ -235,6 +240,9 @@ namespace Source
             // Initial console draw.
             for (int i = 0; i < agentObjsArr.Length; i++)
             {
+                agentObjsArr[i].price.UpdateEchelon();
+                upgraObjsArr[i].price.UpdateEchelon();
+
                 RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
                 RenderWindow.upgraPrice[i] = upgraObjsArr[i].GetPrice();
             }
