@@ -15,8 +15,10 @@ namespace Source
         {
             // Initialize variables
             incomeMultiplier = argPointsMult;
-            initPrice = argInitialPrice;
+            initPrice.value = argInitialPrice;
             priceFactor = argPriceFactor;
+
+            UpdatePrice();
         }
     }
 }

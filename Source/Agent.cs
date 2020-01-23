@@ -19,13 +19,14 @@ namespace Source
             // Initialize variables
 
             // Change these for testing:
-            count.value = 10;
+            count.value = 0;
             count.echelon = 1;
 
             // Progression scaling:
             pointsRate = argPointsRate;
-            initPrice = argInitialPrice;
+            initPrice.value = argInitialPrice;
             priceFactor = argPriceFactor;
+            UpdatePrice();
 
             // Bank score to unlock:
             unlockScore.value = argInitialPrice * 0.745;    // Slightly under 3/4 of initial price.

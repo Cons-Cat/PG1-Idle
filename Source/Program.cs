@@ -47,16 +47,28 @@ namespace Source
         {
             while (!exitCheck)
             {
-                // Loop through all agents
+                // Loop through all agents to increase the player's points bank.
                 for (uint i = 0; i < 10; i++)
                 {
                     if (!agentObjsArr[i].isLocked)
                     {
-                        gamePoints.value = gamePoints.Add(agentObjsArr[i].count.value, agentObjsArr[i].count.echelon); // Point incrementing algorithm.
+                        if (agentObjsArr[i].count.value > 0)
+                        {
+                            // Evaluate agents.
+                            gamePoints.value = (gamePoints.Add(agentObjsArr[i].count.value, agentObjsArr[i].count.echelon));
+                            gamePoints.UpdateEchelon();
 
-                        RenderWindow.agentCount[i] = agentObjsArr[i].count;
-                        RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
-                        RenderWindow.agentPointsRate[i] = (agentObjsArr[i].pointsRate);
+                            // Evaluate upgrades.
+                            if (upgraObjsArr[i].count.value > 0)
+                            {
+                                gamePoints.value = gamePoints.Mult(upgraObjsArr[i].count.Mult(upgraObjsArr[i].incomeMultiplier, upgraObjsArr[i].count.echelon) + 1, 1);
+                                gamePoints.UpdateEchelon();
+                            }
+
+                            RenderWindow.agentCount[i] = agentObjsArr[i].count;
+                            RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
+                            RenderWindow.agentPointsRate[i] = agentObjsArr[i].pointsRate; // Used for optimal calculation
+                        }
                     }
                 }
 
@@ -116,6 +128,7 @@ namespace Source
                             // Increment the agent that the user inputs.
                             agentObjsArr[inputIndex].count.value = agentObjsArr[inputIndex].count.Add(1, 1);
                             agentObjsArr[inputIndex].count.UpdateEchelon();
+                            agentObjsArr[inputIndex].UpdatePrice();
 
                             RenderWindow.agentCount[inputIndex] = agentObjsArr[inputIndex].count;
                             RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
@@ -127,6 +140,7 @@ namespace Source
                             upgraObjsArr[inputIndex].count.UpdateEchelon();
 
                             RenderWindow.upgraCount[inputIndex] = upgraObjsArr[inputIndex].count;
+                            upgraObjsArr[inputIndex].UpdatePrice();
                             RenderWindow.upgraPrice[inputIndex] = upgraObjsArr[inputIndex].GetPrice();
                         }
 
@@ -170,7 +184,7 @@ namespace Source
                     SharedResource--;
                 }
 
-                Thread.Sleep(150);
+                Thread.Sleep(110);
             }
 
             if (exitCheck)
@@ -211,6 +225,12 @@ namespace Source
             upgraObjsArr[7] = new Upgrade(150, 20000, 2);
             upgraObjsArr[8] = new Upgrade(250, 35000, 1.75);
             upgraObjsArr[9] = new Upgrade(300, 50000, 1.5);
+
+            agentObjsArr[0].count.value = 10;
+            agentObjsArr[7].count.value = 1;
+
+            gamePoints.value = 10000;
+            gamePoints.UpdateEchelon();
 
             // Initial console draw.
             for (int i = 0; i < agentObjsArr.Length; i++)

@@ -22,18 +22,17 @@ namespace Source
 
         public void UpdateEchelon()
         {
-            double decimalShift = 0;
             string evalString = ((uint)value).ToString();
             double power = 0;
 
             // If the one-thousands place is not empty:
             if (evalString.Length >= 4)
             {
+                //double decimalShift = 0;
                 power = (evalString.Length - 1) / 3;
 
                 // Decrement the decimal place in multiples of 3.
-                decimalShift = Math.Pow(1000, power);
-                value /= decimalShift;
+                value /= Math.Pow(1000, power);
 
                 // Increment the echelon by 1 for each shift of 3 in the decimal place.
                 echelon += (int)(power % 3);
@@ -149,6 +148,7 @@ namespace Source
             return value * (argDouble * Math.Pow(1000, argEchelon - this.echelon));
         }
 
+        // Division operation:
         public double Div(double argDouble, int argEchelon)
         {
             return value / (argDouble * Math.Pow(1000, argEchelon - this.echelon));

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 
 namespace Source
@@ -65,9 +64,9 @@ namespace Source
             // Declare arrays:
             #region
 
-            gridString = new string[rowCount, columnCount, 3];
+            gridString = new string[rowCount, columnCount, 4];
             gridStringCount = new uint[rowCount, columnCount];
-            gridStringColor = new ConsoleColor[rowCount, columnCount, 3];
+            gridStringColor = new ConsoleColor[rowCount, columnCount, 4];
 
             gridType = new RenderGridTypes[rowCount, columnCount];
             gridCol = new ConsoleColor[rowCount, columnCount];
@@ -126,6 +125,7 @@ namespace Source
             agentLabel[8] = "Demolition Expert";
             agentLabel[9] = "Crypto Miner";
 
+            upgraLabel[0] = "Ston435 Hasf325";
             upgraLabel[1] = "Coalretg Miner";
             upgraLabel[2] = "Iron fdgMiner";
             upgraLabel[3] = "Ofdg4perator";
@@ -196,10 +196,13 @@ namespace Source
                         {
                             gridType[i, j] = RenderGridTypes.GridString;
                             gridStringColor[i, j, 1] = ConsoleColor.Cyan;
-                            gridStringCount[i, j] = 1;
+                            gridStringColor[i, j, 3] = ConsoleColor.Cyan;
+                            gridStringCount[i, j] = 3;
 
                             gridString[i, j, 0] = "Press ";
-                            gridString[i, j, 1] = "Shift";
+                            gridString[i, j, 1] = "<-";
+                            gridString[i, j, 2] = " or ";
+                            gridString[i, j, 3] = "->";
                         }
                     }
 
@@ -464,7 +467,7 @@ namespace Source
 
                             if (agentIsLocked[rowIterate])
                             {
-                                /*string tempQStr = "";
+                                string tempQStr = "";
 
                                 foreach (char c in upgraLabel[rowIterate])
                                 {
@@ -472,11 +475,11 @@ namespace Source
                                 }
 
                                 Console.Write(tempQStr.PadRight(columnWidth[columnIterate], ' '));
-                                */
+
                             }
                             else
                             {
-                                //Console.Write(upgraLabel[rowIterate].PadRight(columnWidth[columnIterate], ' '));
+                                Console.Write(upgraLabel[rowIterate].PadRight(columnWidth[columnIterate], ' '));
                             }
 
                             break;
@@ -564,8 +567,6 @@ namespace Source
                     gridType[i, 5] = RenderGridTypes.GridUpgradeLabel;
 
                     gridString[i, 5, 0] = upgraLabel[i];
-
-                    //Debug.WriteLine(upgraPrice[i].value);
                 }
             }
         }
