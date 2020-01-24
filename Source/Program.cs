@@ -27,11 +27,13 @@ namespace Source
 
             for (int i = 0; i < 10; i++)
             {
-                RenderWindow.agentCount[i] = upgraObjsArr[i].count;
-                RenderWindow.agentPrice[i] = upgraObjsArr[i].GetPrice();
+                RenderWindow.agentCount[i] = agentObjsArr[i].count;
+                RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
+                RenderWindow.agentPointsRate[i] = agentObjsArr[i].pointsRate; // Used for optimal calculation
 
                 RenderWindow.upgraCount[i] = upgraObjsArr[i].count;
                 RenderWindow.upgraPrice[i] = upgraObjsArr[i].GetPrice();
+                RenderWindow.upgraIncomeMult[i] = upgraObjsArr[i].incomeMultiplier; // Used for optimal calculation
             }
 
             renderObj.RenderLoop();
@@ -79,10 +81,6 @@ namespace Source
 
                             gamePoints.value = gamePoints.Add(tempNumber.value, tempNumber.echelon);
                             gamePoints.UpdateEchelon();
-
-                            RenderWindow.agentCount[i] = agentObjsArr[i].count;
-                            RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
-                            RenderWindow.agentPointsRate[i] = agentObjsArr[i].pointsRate.value; // Used for optimal calculation
                         }
                     }
                 }
@@ -252,17 +250,6 @@ namespace Source
             upgraObjsArr[9] = new Upgrade(300, 50, 2, 1.75);
 
             // Initial console draw.
-            for (int i = 0; i < agentObjsArr.Length; i++)
-            {
-                agentObjsArr[i].price.UpdateEchelon();
-                upgraObjsArr[i].price.UpdateEchelon();
-
-                RenderWindow.agentPrice[i] = agentObjsArr[i].GetPrice();
-                RenderWindow.upgraPrice[i] = upgraObjsArr[i].GetPrice();
-            }
-
-            agentObjsArr[0].count.value = 100;
-            agentObjsArr[0].count.echelon = 2;
             UpdateConsole();
 
             // Instantiate threads.

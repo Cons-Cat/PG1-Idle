@@ -21,7 +21,6 @@ namespace Source
             //create the file
             try
             {
-                Debug.WriteLine("SAVED");
                 writerObj = new BinaryWriter(new FileStream("savegame", FileMode.Create));
 
                 // Write points bank.
@@ -60,7 +59,6 @@ namespace Source
         {
             try
             {
-                Debug.WriteLine("LOADED");
                 readerObj = new BinaryReader(new FileStream("savegame", FileMode.Open));
 
                 // Load the points bank.

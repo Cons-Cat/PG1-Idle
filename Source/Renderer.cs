@@ -10,6 +10,7 @@ namespace Source
         GridEmpty,
         GridString,
         GridPoints,
+        GridChangeMenu,
 
         GridAgentPrice,
         GridAgentCount,
@@ -43,12 +44,15 @@ namespace Source
         public static MassiveNumber[] upgraCount = new MassiveNumber[10];
         public static MassiveNumber[] upgraPrice = new MassiveNumber[10];
 
+        public static MassiveNumber[] agentPointsRate = new MassiveNumber[10];
+        public static double[] upgraIncomeMult = new double[10];
+
         public static string[] agentLabel = new string[10];
         public static string[,] upgraLabel = new string[10, 3];
 
-        public static double[] agentPointsRate;
         public static bool[] agentIsLocked;
         public static uint currentMenuInd;
+        static bool optimalIsAgent;
         static uint menuPages;
 
         // Constructor
@@ -75,7 +79,8 @@ namespace Source
             gamePoints = new MassiveNumber();
             displayPoints = new MassiveNumber();
 
-            agentPointsRate = new double[rowCount];
+            agentPointsRate = new MassiveNumber[rowCount];
+
             agentIsLocked = new bool[rowCount];
 
             agentLabel = new string[rowCount];
@@ -95,7 +100,7 @@ namespace Source
                 upgraCount[i] = new MassiveNumber();
                 upgraPrice[i] = new MassiveNumber();
 
-                agentPointsRate[i] = 1.0;
+                agentPointsRate[i] = new MassiveNumber();
                 agentIsLocked[i] = true;
             }
 
@@ -103,6 +108,8 @@ namespace Source
 
             // Hardcoded values:
             #region
+
+            optimalIsAgent = true;
 
             currentMenuInd = 1;     // 1 -> Agents
                                     // 2 -> Upgrades
@@ -204,7 +211,7 @@ namespace Source
                         if (i == rowCount / 2 - 1)
                         {
                             gridType[i, j] = RenderGridTypes.GridPoints;
-                            gridString[i, j, 0] = "Dollars: ";
+                            gridString[i, j, 0] = "Profits: ";
                         }
                         else if (i == rowCount / 2)
                         {
@@ -218,9 +225,7 @@ namespace Source
                         }
                         else if (i == rowCount / 2 + 1)
                         {
-                            gridType[i, j] = RenderGridTypes.GridString;
-                            gridStringColor[i, j, 1] = ConsoleColor.Cyan;
-                            gridStringColor[i, j, 3] = ConsoleColor.Cyan;
+                            gridType[i, j] = RenderGridTypes.GridChangeMenu;
                             gridStringCount[i, j] = 3;
 
                             gridString[i, j, 0] = "Press ";
@@ -368,7 +373,8 @@ namespace Source
         public void RenderLoop()
         {
             string tempStr;
-            uint optimalAgent = OptimalAgent();
+            // Return row index with the optimal item, and set isAgentOptimal as a side effect.
+            uint optimalRow = OptimalItem();
 
             // Refresh the console;
             Console.Clear();
@@ -380,6 +386,7 @@ namespace Source
                 for (uint columnIterate = 0; columnIterate < columnCount; columnIterate++)
                 {
                     tempStr = gridString[rowIterate, columnIterate, 0];
+                    int tempStrLength = 0;
 
                     switch (gridType[rowIterate, columnIterate])
                     {
@@ -396,8 +403,6 @@ namespace Source
                             break;
 
                         case RenderGridTypes.GridString:
-                            int tempStrLength = 0;
-
                             for (uint i = 0; i <= gridStringCount[rowIterate, columnIterate]; i++)
                             {
                                 Console.ForegroundColor = gridStringColor[rowIterate, columnIterate, i];
@@ -413,6 +418,56 @@ namespace Source
 
                                 tempStrLength += gridString[rowIterate, columnIterate, i].Length;
                             }
+
+                            break;
+
+                        case RenderGridTypes.GridChangeMenu:
+                            // Super hack-y quick code. But it works.
+                            tempStrLength = 0;
+
+                            for (int j = 0; j <= 1; j++)
+                            {
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.Write(gridString[rowIterate, columnIterate, j * 2]);
+                                tempStrLength += gridString[rowIterate, columnIterate, j * 2].Length;
+
+                                if (optimalIsAgent)
+                                {
+                                    if (currentMenuInd == 1)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                                    }
+                                    else if (agentPrice[optimalRow].IsGreaterThan(gamePoints))
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                    }
+                                    else
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                                    }
+                                }
+                                else
+                                {
+                                    if (currentMenuInd == 2)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                                    }
+                                    else if (upgraPrice[optimalRow].IsGreaterThan(gamePoints))
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                    }
+                                    else
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                                    }
+                                }
+
+                                Console.Write(gridString[rowIterate, columnIterate, j * 2 + 1]);
+                                tempStrLength += gridString[rowIterate, columnIterate, j * 2 + 1].Length;
+
+                            }
+
+                            Console.Write("".PadRight(columnWidth[columnIterate] - tempStrLength, ' '));
 
                             break;
 
@@ -457,7 +512,7 @@ namespace Source
                             if (gamePoints.IsGreaterThan(agentPrice[rowIterate]))
                             {
                                 // If the player can afford this agent.
-                                if (rowIterate == optimalAgent)
+                                if (rowIterate == optimalRow && optimalIsAgent)
                                 {
                                     // If this is the most cost efficient agent.
                                     Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -470,7 +525,7 @@ namespace Source
                             else
                             {
                                 // If the player cannot afford this agent.
-                                if (rowIterate == optimalAgent)
+                                if (rowIterate == optimalRow && optimalIsAgent)
                                 {
                                     // If this is the most cost efficient agent.
                                     Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -539,7 +594,7 @@ namespace Source
                                 if (gamePoints.IsGreaterThan(upgraPrice[rowIterate]))
                                 {
                                     // If the player can afford this agent.
-                                    if (rowIterate == optimalAgent)
+                                    if (rowIterate == optimalRow && !optimalIsAgent)
                                     {
                                         // If this is the most cost efficient agent.
                                         Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -552,7 +607,7 @@ namespace Source
                                 else
                                 {
                                     // If the player cannot afford this agent.
-                                    if (rowIterate == optimalAgent)
+                                    if (rowIterate == optimalRow && !optimalIsAgent)
                                     {
                                         // If this is the most cost efficient agent.
                                         Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -627,19 +682,52 @@ namespace Source
             }
         }
 
-        private uint OptimalAgent()
+        private uint OptimalItem()
         {
             uint returnRow = 0;
+            MassiveNumber tempNumber = new MassiveNumber();
 
             for (uint i = 0; i < rowCount; i++)
             {
-                // Find the most cost efficient agent.
-                // Divide each Agent's Price by its Income Rate.
+                // Find the most cost efficient item.
                 if (!agentIsLocked[i])
                 {
-                    if (agentPrice[i].Div(agentPointsRate[i], 1) <= agentPrice[returnRow].Div(agentPointsRate[returnRow], 1))
+                    // Divide each Agent's price by its income rate.
+                    MassiveNumber calcNumber = new MassiveNumber();
+                    calcNumber.value = agentPrice[i].value;
+                    calcNumber.UpdateEchelon();
+
+                    calcNumber.value = calcNumber.Div(agentPointsRate[i].value, agentPointsRate[i].echelon);
+                    calcNumber.UpdateEchelon();
+
+                    if (calcNumber.IsGreaterThan(tempNumber))
                     {
                         returnRow = i;
+                        optimalIsAgent = true;              // Side effect.
+                        tempNumber = calcNumber;
+                    }
+
+                    // Do not consider upgrades for agents that do not exist.
+                    if (agentCount[i].value > 0)
+                    {
+                        // Divide each Upgrade's price by its immediate income rate.
+                        MassiveNumber calcNumber2 = new MassiveNumber();
+                        calcNumber.value = upgraPrice[i].value;
+                        calcNumber.UpdateEchelon();
+
+                        MassiveNumber UpgradeIncome = new MassiveNumber();
+                        UpgradeIncome.value = agentCount[i].Mult(upgraIncomeMult[i], 1);
+                        UpgradeIncome.UpdateEchelon();
+
+                        calcNumber2.value = UpgradeIncome.Div(upgraPrice[i].value, upgraPrice[i].echelon);
+                        calcNumber2.UpdateEchelon();
+
+                        if (calcNumber2.IsGreaterThan(tempNumber))
+                        {
+                            returnRow = i;
+                            optimalIsAgent = false;         // Side effect.
+                            tempNumber = calcNumber;
+                        }
                     }
                 }
             }
