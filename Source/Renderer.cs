@@ -135,20 +135,20 @@ namespace Source
             upgraLabel[2, 0] = "Efficient Tools";
             upgraLabel[2, 1] = "Morale Boost";
             upgraLabel[2, 2] = "Energy Drinks";
+            upgraLabel[2, 0] = "Efficient Tools";
+            upgraLabel[2, 1] = "Morale Boost";
+            upgraLabel[2, 2] = "Energy Drinks";
 
-            upgraLabel[2, 0] = "Wireless Drills";
-            upgraLabel[2, 1] = "Extended Battery Life";
-            upgraLabel[2, 2] = "Multi-Bit Drills";
             upgraLabel[3, 0] = "Wireless Drills";
             upgraLabel[3, 1] = "Extended Battery Life";
             upgraLabel[3, 2] = "Multi-Bit Drills";
             upgraLabel[4, 0] = "Wireless Drills";
             upgraLabel[4, 1] = "Extended Battery Life";
             upgraLabel[4, 2] = "Multi-Bit Drills";
+            upgraLabel[5, 0] = "Wireless Drills";
+            upgraLabel[5, 1] = "Extended Battery Life";
+            upgraLabel[5, 2] = "Multi-Bit Drills";
 
-            upgraLabel[5, 0] = "Increased Potency";
-            upgraLabel[5, 1] = "Faster Fuse Time";
-            upgraLabel[5, 2] = "Cluster Explosive";
             upgraLabel[6, 0] = "Increased Potency";
             upgraLabel[6, 1] = "Faster Fuse Time";
             upgraLabel[6, 2] = "Cluster Explosive";
