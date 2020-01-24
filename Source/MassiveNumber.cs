@@ -23,13 +23,12 @@ namespace Source
         public void UpdateEchelon()
         {
             string evalString = ((uint)value).ToString();
-            double power = 0;
 
             // If the one-thousands place is not empty:
             if (evalString.Length >= 4)
             {
                 //double decimalShift = 0;
-                power = (evalString.Length - 1) / 3;
+                double power = (evalString.Length - 1) / 3;
 
                 // Decrement the decimal place in multiples of 3.
                 value /= Math.Pow(1000, power);
@@ -41,15 +40,9 @@ namespace Source
             // If the ones place is empty AND the MassiveNumber is not equivalent to 0:
             while (evalString[0] == '0' && evalString.Length == 1 && value != 0)
             {
-                power += 1;
-
                 // Increment the decimal place in multiples of 3.
-                if (power == 3)
-                {
-                    power = 0;
-                    value *= 1000;
-                    echelon--;
-                }
+                value *= 1000;
+                echelon--;
 
                 // Update evalString for loop condition.
                 evalString = ((uint)value).ToString();
@@ -238,7 +231,7 @@ namespace Source
         {
             bool returnBool;
 
-            if ((this.echelon > argNum.echelon) || (this.echelon == argNum.echelon && this.value >= argNum.value) || (this.echelon == 1 && argNum.echelon == 1 && (uint)this.value == (uint)argNum.value))
+            if ((this.echelon > argNum.echelon) || (this.echelon == argNum.echelon && this.value >= argNum.value))
             {
                 returnBool = true;
             }

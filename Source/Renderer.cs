@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Source
@@ -43,7 +44,7 @@ namespace Source
         public static MassiveNumber[] upgraPrice = new MassiveNumber[10];
 
         public static string[] agentLabel = new string[10];
-        public static string[] upgraLabel = new string[10];
+        public static string[,] upgraLabel = new string[10, 3];
 
         public static double[] agentPointsRate;
         public static bool[] agentIsLocked;
@@ -78,7 +79,7 @@ namespace Source
             agentIsLocked = new bool[rowCount];
 
             agentLabel = new string[rowCount];
-            upgraLabel = new string[rowCount];
+            upgraLabel = new string[rowCount, 3];
 
             columnWidth = new int[columnCount];
 
@@ -125,16 +126,42 @@ namespace Source
             agentLabel[8] = "Demolition Expert";
             agentLabel[9] = "Crypto Miner";
 
-            upgraLabel[0] = "Ston435 Hasf325";
-            upgraLabel[1] = "Coalretg Miner";
-            upgraLabel[2] = "Iron fdgMiner";
-            upgraLabel[3] = "Ofdg4perator";
-            upgraLabel[4] = "D435rill Operator";
-            upgraLabel[5] = "Drill Operator";
-            upgraLabel[6] = "Blast M345iner";
-            upgraLabel[7] = "Demolit978ionist";
-            upgraLabel[8] = "Expert";
-            upgraLabel[9] = "Crypto 5534Miner";
+            upgraLabel[0, 0] = "Efficient Tools";
+            upgraLabel[0, 1] = "Morale Boost";
+            upgraLabel[0, 2] = "Energy Drinks";
+            upgraLabel[1, 0] = "Efficient Tools";
+            upgraLabel[1, 1] = "Morale Boost";
+            upgraLabel[1, 2] = "Energy Drinks";
+            upgraLabel[2, 0] = "Efficient Tools";
+            upgraLabel[2, 1] = "Morale Boost";
+            upgraLabel[2, 2] = "Energy Drinks";
+
+            upgraLabel[2, 0] = "Wireless Drills";
+            upgraLabel[2, 1] = "Extended Battery Life";
+            upgraLabel[2, 2] = "Multi-Bit Drills";
+            upgraLabel[3, 0] = "Wireless Drills";
+            upgraLabel[3, 1] = "Extended Battery Life";
+            upgraLabel[3, 2] = "Multi-Bit Drills";
+            upgraLabel[4, 0] = "Wireless Drills";
+            upgraLabel[4, 1] = "Extended Battery Life";
+            upgraLabel[4, 2] = "Multi-Bit Drills";
+
+            upgraLabel[5, 0] = "Increased Potency";
+            upgraLabel[5, 1] = "Faster Fuse Time";
+            upgraLabel[5, 2] = "Cluster Explosive";
+            upgraLabel[6, 0] = "Increased Potency";
+            upgraLabel[6, 1] = "Faster Fuse Time";
+            upgraLabel[6, 2] = "Cluster Explosive";
+            upgraLabel[7, 0] = "Increased Potency";
+            upgraLabel[7, 1] = "Faster Fuse Time";
+            upgraLabel[7, 2] = "Cluster Explosive";
+            upgraLabel[8, 0] = "Increased Potency";
+            upgraLabel[8, 1] = "Faster Fuse Time";
+            upgraLabel[8, 2] = "Cluster Explosive";
+
+            upgraLabel[9, 0] = "Faster Processors";
+            upgraLabel[9, 1] = "Liquid Cooling";
+            upgraLabel[9, 2] = "Overclocking";
 
             for (int i = 0; i < gridStringColor.GetLength(0); i++)
             {
@@ -407,7 +434,14 @@ namespace Source
 
                                 foreach (char c in agentLabel[rowIterate])
                                 {
-                                    tempQStr += "?";
+                                    if (c != ' ')
+                                    {
+                                        tempQStr += "?";
+                                    }
+                                    else
+                                    {
+                                        tempQStr += " ";
+                                    }
                                 }
 
                                 Console.Write(tempQStr.PadRight(columnWidth[columnIterate], ' '));
@@ -463,23 +497,38 @@ namespace Source
                             break;
 
                         case RenderGridTypes.GridUpgradeLabel:
-                            Console.ForegroundColor = ConsoleColor.DarkGray;
-
-                            if (agentIsLocked[rowIterate])
+                            if (upgraCount[rowIterate].value < 3)
                             {
-                                string tempQStr = "";
+                                Console.ForegroundColor = ConsoleColor.DarkGray;
 
-                                foreach (char c in upgraLabel[rowIterate])
+                                if (agentIsLocked[rowIterate])
                                 {
-                                    tempQStr += "?";
+                                    string tempQStr = "";
+
+                                    foreach (char c in upgraLabel[rowIterate, (int)upgraCount[rowIterate].value])
+                                    {
+                                        if (c != ' ')
+                                        {
+                                            tempQStr += "?";
+                                        }
+                                        else
+                                        {
+                                            tempQStr += " ";
+                                        }
+                                    }
+
+                                    Console.Write(tempQStr.PadRight(columnWidth[columnIterate], ' '));
+
                                 }
-
-                                Console.Write(tempQStr.PadRight(columnWidth[columnIterate], ' '));
-
+                                else
+                                {
+                                    Console.Write(upgraLabel[rowIterate, (int)upgraCount[rowIterate].value].PadRight(columnWidth[columnIterate], ' '));
+                                }
                             }
                             else
                             {
-                                Console.Write(upgraLabel[rowIterate].PadRight(columnWidth[columnIterate], ' '));
+                                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                                Console.Write("UPGRADES MAXED");
                             }
 
                             break;
@@ -488,34 +537,41 @@ namespace Source
                             Console.ForegroundColor = ConsoleColor.White; // Reset color
                             Console.Write(tempStr);
 
-                            if (gamePoints.IsGreaterThan(upgraPrice[rowIterate]))
+                            if (upgraCount[rowIterate].value < 3)
                             {
-                                // If the player can afford this agent.
-                                if (rowIterate == optimalAgent)
+                                if (gamePoints.IsGreaterThan(upgraPrice[rowIterate]))
                                 {
-                                    // If this is the most cost efficient agent.
-                                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                                    // If the player can afford this agent.
+                                    if (rowIterate == optimalAgent)
+                                    {
+                                        // If this is the most cost efficient agent.
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                                    }
+                                    else
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                                    }
                                 }
                                 else
                                 {
-                                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                                    // If the player cannot afford this agent.
+                                    if (rowIterate == optimalAgent)
+                                    {
+                                        // If this is the most cost efficient agent.
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                    }
+                                    else
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                                    }
                                 }
+
+                                Console.Write(upgraPrice[rowIterate].GetAbbreviation().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
                             }
                             else
                             {
-                                // If the player cannot afford this agent.
-                                if (rowIterate == optimalAgent)
-                                {
-                                    // If this is the most cost efficient agent.
-                                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                                }
-                                else
-                                {
-                                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                                }
+                                Console.Write(("").PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
                             }
-
-                            Console.Write(upgraPrice[rowIterate].GetAbbreviation().PadRight(columnWidth[columnIterate] - tempStr.Length, ' '));
 
                             break;
 
@@ -566,7 +622,10 @@ namespace Source
                     gridType[i, 4] = RenderGridTypes.GridUpgradeCount;
                     gridType[i, 5] = RenderGridTypes.GridUpgradeLabel;
 
-                    gridString[i, 5, 0] = upgraLabel[i];
+                    if (upgraCount[i].value < 3)
+                    {
+                        gridString[i, 5, 0] = upgraLabel[i, (int)upgraCount[i].value];
+                    }
                 }
             }
         }

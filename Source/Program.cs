@@ -137,21 +137,29 @@ namespace Source
 
                             RenderWindow.agentCount[inputIndex] = agentObjsArr[inputIndex].count;
                             RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
+
+                            // Decrease the player's points bank.
+                            gamePoints.value = gamePoints.Sub(itemCost.value, itemCost.echelon);
+                            gamePoints.UpdateEchelon();
                         }
                         else if (RenderWindow.currentMenuInd == 2)
                         {
-                            // Increment the upgrade that the user inputs.
-                            upgraObjsArr[inputIndex].count.value = upgraObjsArr[inputIndex].count.Add(1, 1);
-                            upgraObjsArr[inputIndex].count.UpdateEchelon();
-                            upgraObjsArr[inputIndex].UpdatePrice();
+                            // If the upgrade is available.
+                            if (upgraObjsArr[inputIndex].count.value <= upgraObjsArr[inputIndex].maxCount)
+                            {
+                                // Increment the upgrade that the user inputs.
+                                upgraObjsArr[inputIndex].count.value = upgraObjsArr[inputIndex].count.Add(1, 1);
+                                upgraObjsArr[inputIndex].count.UpdateEchelon();
+                                upgraObjsArr[inputIndex].UpdatePrice();
 
-                            RenderWindow.upgraCount[inputIndex] = upgraObjsArr[inputIndex].count;
-                            RenderWindow.upgraPrice[inputIndex] = upgraObjsArr[inputIndex].GetPrice();
+                                RenderWindow.upgraCount[inputIndex] = upgraObjsArr[inputIndex].count;
+                                RenderWindow.upgraPrice[inputIndex] = upgraObjsArr[inputIndex].GetPrice();
+
+                                // Decrease the player's points bank.
+                                gamePoints.value = gamePoints.Sub(itemCost.value, itemCost.echelon);
+                                gamePoints.UpdateEchelon();
+                            }
                         }
-
-                        // Decrease the player's points bank.
-                        gamePoints.value = gamePoints.Sub(itemCost.value, itemCost.echelon);
-                        gamePoints.UpdateEchelon();
                     }
                 }
                 else
@@ -231,12 +239,6 @@ namespace Source
             upgraObjsArr[8] = new Upgrade(250, 35, 2, 1.75);
             upgraObjsArr[9] = new Upgrade(300, 50, 2, 1.5);
 
-            agentObjsArr[0].count.value = 10;
-            agentObjsArr[0].UpdatePrice();
-
-            gamePoints.value = 10000;
-            gamePoints.UpdateEchelon();
-
             // Initial console draw.
             for (int i = 0; i < agentObjsArr.Length; i++)
             {
@@ -247,6 +249,8 @@ namespace Source
                 RenderWindow.upgraPrice[i] = upgraObjsArr[i].GetPrice();
             }
 
+            agentObjsArr[0].count.value = 100;
+            agentObjsArr[0].count.echelon = 2;
             UpdateConsole();
 
             // Instantiate threads.

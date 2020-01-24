@@ -31,7 +31,8 @@ namespace Source
             UpdatePrice();
 
             // Bank score to unlock:
-            unlockScore.value = argInitialPriceVal * 0.745;    // Slightly under 3/4 of initial price.
+            unlockScore = initPrice;
+            unlockScore.value = unlockScore.Mult(0.745, unlockScore.echelon);    // Slightly under 3/4 of initial price.
             unlockScore.UpdateEchelon();
 
             isLocked = true;
@@ -39,6 +40,7 @@ namespace Source
 
         public void Unlock(MassiveNumber argPoints)
         {
+
             if (argPoints.IsGreaterThan(this.unlockScore))
             {
                 isLocked = false;
