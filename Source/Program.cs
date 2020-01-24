@@ -229,15 +229,15 @@ namespace Source
 
             // Initialize ten upgrades.
             upgraObjsArr[0] = new Upgrade(1, 100, 1, 2);
-            upgraObjsArr[1] = new Upgrade(2.5, 300, 1, 2);
-            upgraObjsArr[2] = new Upgrade(5, 700, 1, 2);
-            upgraObjsArr[3] = new Upgrade(10, 1.5, 2, 2);
-            upgraObjsArr[4] = new Upgrade(20, 3.5, 2, 2);
-            upgraObjsArr[5] = new Upgrade(45, 5, 2, 2);
-            upgraObjsArr[6] = new Upgrade(85, 10, 2, 2);
-            upgraObjsArr[7] = new Upgrade(150, 20, 2, 2);
-            upgraObjsArr[8] = new Upgrade(250, 35, 2, 1.75);
-            upgraObjsArr[9] = new Upgrade(300, 50, 2, 1.5);
+            upgraObjsArr[1] = new Upgrade(2.5, 300, 1, 1.45);
+            upgraObjsArr[2] = new Upgrade(5, 700, 1, 2.6);
+            upgraObjsArr[3] = new Upgrade(10, 1.5, 2, 2.5);
+            upgraObjsArr[4] = new Upgrade(20, 3.5, 2, 2.4);
+            upgraObjsArr[5] = new Upgrade(45, 5, 2, 2.37);
+            upgraObjsArr[6] = new Upgrade(85, 10, 2, 2.35);
+            upgraObjsArr[7] = new Upgrade(150, 15, 2, 2.28);
+            upgraObjsArr[8] = new Upgrade(250, 35, 2, 1.5);
+            upgraObjsArr[9] = new Upgrade(300, 50, 2, 1.75);
 
             // Initial console draw.
             for (int i = 0; i < agentObjsArr.Length; i++)

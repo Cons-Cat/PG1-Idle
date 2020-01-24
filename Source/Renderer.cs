@@ -126,38 +126,35 @@ namespace Source
             agentLabel[8] = "Demolition Expert";
             agentLabel[9] = "Crypto Miner";
 
-            upgraLabel[0, 0] = "Efficient Tools";
+            upgraLabel[0, 0] = "Better Grip Gloves";
             upgraLabel[0, 1] = "Morale Boost";
-            upgraLabel[0, 2] = "Energy Drinks";
-            upgraLabel[1, 0] = "Efficient Tools";
+            upgraLabel[0, 2] = "Automated Stone Grabbing System";
+            upgraLabel[1, 0] = "Sharper pickaxes";
             upgraLabel[1, 1] = "Morale Boost";
-            upgraLabel[1, 2] = "Energy Drinks";
-            upgraLabel[2, 0] = "Efficient Tools";
-            upgraLabel[2, 1] = "Morale Boost";
-            upgraLabel[2, 2] = "Energy Drinks";
-            upgraLabel[2, 0] = "Efficient Tools";
+            upgraLabel[1, 2] = "Coffee";
+            upgraLabel[2, 0] = "Sturdier Pickaxes";
             upgraLabel[2, 1] = "Morale Boost";
             upgraLabel[2, 2] = "Energy Drinks";
 
             upgraLabel[3, 0] = "Wireless Drills";
             upgraLabel[3, 1] = "Extended Battery Life";
-            upgraLabel[3, 2] = "Multi-Bit Drills";
-            upgraLabel[4, 0] = "Wireless Drills";
-            upgraLabel[4, 1] = "Extended Battery Life";
-            upgraLabel[4, 2] = "Multi-Bit Drills";
-            upgraLabel[5, 0] = "Wireless Drills";
-            upgraLabel[5, 1] = "Extended Battery Life";
-            upgraLabel[5, 2] = "Multi-Bit Drills";
+            upgraLabel[3, 2] = "Dual-Bit Drills";
+            upgraLabel[4, 0] = "Reinforced Drills";
+            upgraLabel[4, 1] = "Battery Cell Array";
+            upgraLabel[4, 2] = "Quad-Bit Drills";
+            upgraLabel[5, 0] = "Lighter Drills";
+            upgraLabel[5, 1] = "Portable Reactors";
+            upgraLabel[5, 2] = "Omni-Bit Drills";
 
             upgraLabel[6, 0] = "Increased Potency";
             upgraLabel[6, 1] = "Faster Fuse Time";
             upgraLabel[6, 2] = "Cluster Explosive";
-            upgraLabel[7, 0] = "Increased Potency";
-            upgraLabel[7, 1] = "Faster Fuse Time";
-            upgraLabel[7, 2] = "Cluster Explosive";
-            upgraLabel[8, 0] = "Increased Potency";
-            upgraLabel[8, 1] = "Faster Fuse Time";
-            upgraLabel[8, 2] = "Cluster Explosive";
+            upgraLabel[7, 0] = "Recursive Explosive Mining";
+            upgraLabel[7, 1] = "Compact Explosive Mining";
+            upgraLabel[7, 2] = "Hypersonic Explosive Mining";
+            upgraLabel[8, 0] = "Thermobaric Explosive License";
+            upgraLabel[8, 1] = "Anti-Matter Explosive License";
+            upgraLabel[8, 2] = "Red Matter Explosive License";
 
             upgraLabel[9, 0] = "Faster Processors";
             upgraLabel[9, 1] = "Liquid Cooling";
