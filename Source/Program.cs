@@ -10,9 +10,9 @@ namespace Source
     class Program
     {
         // Instantiation
-        static Agent[] agentObjsArr = new Agent[10]; // 10 agents
-        static Upgrade[] upgraObjsArr = new Upgrade[10]; // 10 upgrades
-        static RenderWindow renderObj = new RenderWindow(9, 5); // 10 rows, 6 columns
+        static public Agent[] agentObjsArr = new Agent[10]; // 10 agents
+        static public Upgrade[] upgraObjsArr = new Upgrade[10]; // 10 upgrades
+        static public RenderWindow renderObj = new RenderWindow(9, 5); // 10 rows, 6 columns
 
         static public int SharedResource { get; set; }
         static public object raceConditionLocker = 0;
@@ -24,6 +24,16 @@ namespace Source
         {
             // Update the renderer's points.
             RenderWindow.gamePoints = gamePoints;
+
+            for (int i = 0; i < 10; i++)
+            {
+                RenderWindow.agentCount[i] = upgraObjsArr[i].count;
+                RenderWindow.agentPrice[i] = upgraObjsArr[i].GetPrice();
+
+                RenderWindow.upgraCount[i] = upgraObjsArr[i].count;
+                RenderWindow.upgraPrice[i] = upgraObjsArr[i].GetPrice();
+            }
+
             renderObj.RenderLoop();
         }
 
@@ -135,9 +145,6 @@ namespace Source
                             agentObjsArr[inputIndex].count.UpdateEchelon();
                             agentObjsArr[inputIndex].UpdatePrice();
 
-                            RenderWindow.agentCount[inputIndex] = agentObjsArr[inputIndex].count;
-                            RenderWindow.agentPrice[inputIndex] = agentObjsArr[inputIndex].GetPrice();
-
                             // Decrease the player's points bank.
                             gamePoints.value = gamePoints.Sub(itemCost.value, itemCost.echelon);
                             gamePoints.UpdateEchelon();
@@ -151,9 +158,6 @@ namespace Source
                                 upgraObjsArr[inputIndex].count.value = upgraObjsArr[inputIndex].count.Add(1, 1);
                                 upgraObjsArr[inputIndex].count.UpdateEchelon();
                                 upgraObjsArr[inputIndex].UpdatePrice();
-
-                                RenderWindow.upgraCount[inputIndex] = upgraObjsArr[inputIndex].count;
-                                RenderWindow.upgraPrice[inputIndex] = upgraObjsArr[inputIndex].GetPrice();
 
                                 // Decrease the player's points bank.
                                 gamePoints.value = gamePoints.Sub(itemCost.value, itemCost.echelon);
@@ -173,6 +177,14 @@ namespace Source
                             // Attempt to unlock every locked agent.
                             UnlockAgents();
 
+                            break;
+
+                        case ConsoleKey.S:
+                            FileIO.SaveGame();
+                            break;
+
+                        case ConsoleKey.L:
+                            FileIO.LoadGame();
                             break;
 
                         case ConsoleKey.RightArrow:
