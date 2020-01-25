@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace Source
 {
@@ -115,6 +111,11 @@ namespace Source
                 int inputIndex;
 
                 // Player controls
+                while (Console.KeyAvailable)
+                {
+                    Console.ReadKey(false);
+                }
+
                 ConsoleKeyInfo playerInput = Console.ReadKey();
 
                 if (Char.IsNumber(playerInput.KeyChar))
@@ -207,7 +208,7 @@ namespace Source
                     SharedResource--;
                 }
 
-                Thread.Sleep(110);
+                Thread.Sleep(30);
             }
 
             if (exitCheck)

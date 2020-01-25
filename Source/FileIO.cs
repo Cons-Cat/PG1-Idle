@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Source
 {
@@ -21,7 +16,7 @@ namespace Source
             //create the file
             try
             {
-                writerObj = new BinaryWriter(new FileStream("savegame", FileMode.Create));
+                writerObj = new BinaryWriter(new FileStream("savegame.idle", FileMode.Create));
 
                 // Write points bank.
                 writerObj.Write(Program.gamePoints.value);
@@ -59,7 +54,7 @@ namespace Source
         {
             try
             {
-                readerObj = new BinaryReader(new FileStream("savegame", FileMode.Open));
+                readerObj = new BinaryReader(new FileStream("savegame.idle", FileMode.Open));
 
                 // Load the points bank.
                 Program.gamePoints.value = readerObj.ReadDouble();

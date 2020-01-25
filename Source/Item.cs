@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-
-namespace Source
+﻿namespace Source
 {
     public class Item
     {
