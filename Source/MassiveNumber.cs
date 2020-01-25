@@ -41,7 +41,11 @@ namespace Source
             {
                 // Increment the decimal place in multiples of 3.
                 value *= 1000;
-                echelon--;
+
+                if (echelon > 1)
+                {
+                    echelon--;
+                }
 
                 // Update evalString for loop condition.
                 evalString = ((uint)value).ToString();

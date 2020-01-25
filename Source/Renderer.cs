@@ -683,6 +683,8 @@ namespace Source
         {
             uint returnRow = 0;
             MassiveNumber tempNumber = new MassiveNumber();
+            tempNumber.echelon = 1;
+            tempNumber.value = -1;
 
             for (uint i = 0; i < rowCount; i++)
             {
@@ -692,16 +694,18 @@ namespace Source
                     // Divide each Agent's price by its income rate.
                     MassiveNumber calcNumber = new MassiveNumber();
                     calcNumber.value = agentPrice[i].value;
-                    calcNumber.UpdateEchelon();
+                    calcNumber.echelon = agentPrice[i].echelon;
 
                     calcNumber.value = calcNumber.Div(agentPointsRate[i].value, agentPointsRate[i].echelon);
                     calcNumber.UpdateEchelon();
 
-                    if (calcNumber.IsGreaterThan(tempNumber))
+                    // If this is the shortest time to break even.
+                    if ((!calcNumber.IsGreaterThan(tempNumber)) || tempNumber.value == -1)
                     {
                         returnRow = i;
                         optimalIsAgent = true;              // Side effect.
-                        tempNumber = calcNumber;
+                        tempNumber.value = calcNumber.value;
+                        tempNumber.echelon = calcNumber.echelon;
                     }
 
                     // Do not consider upgrades for agents that do not exist.
@@ -709,21 +713,23 @@ namespace Source
                     {
                         // Divide each Upgrade's price by its immediate income rate.
                         MassiveNumber calcNumber2 = new MassiveNumber();
-                        calcNumber.value = upgraPrice[i].value;
-                        calcNumber.UpdateEchelon();
+                        calcNumber2.value = upgraPrice[i].value;
+                        calcNumber2.echelon = upgraPrice[i].echelon;
 
                         MassiveNumber UpgradeIncome = new MassiveNumber();
-                        UpgradeIncome.value = agentCount[i].Mult(upgraIncomeMult[i], 1);
+                        UpgradeIncome.value = agentCount[i].Mult(upgraIncomeMult[i] + 1, 1);
                         UpgradeIncome.UpdateEchelon();
 
                         calcNumber2.value = UpgradeIncome.Div(upgraPrice[i].value, upgraPrice[i].echelon);
                         calcNumber2.UpdateEchelon();
 
-                        if (calcNumber2.IsGreaterThan(tempNumber))
+                        // If this is the shortest time to break even.
+                        if (!calcNumber2.IsGreaterThan(tempNumber))
                         {
                             returnRow = i;
                             optimalIsAgent = false;         // Side effect.
-                            tempNumber = calcNumber;
+                            tempNumber.value = calcNumber2.value;
+                            tempNumber.echelon = calcNumber2.echelon;
                         }
                     }
                 }
