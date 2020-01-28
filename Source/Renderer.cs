@@ -711,25 +711,28 @@ namespace Source
                     // Do not consider upgrades for agents that do not exist.
                     if (agentCount[i].value > 0)
                     {
-                        // Divide each Upgrade's price by its immediate income rate.
-                        MassiveNumber calcNumber2 = new MassiveNumber();
-                        calcNumber2.value = upgraPrice[i].value;
-                        calcNumber2.echelon = upgraPrice[i].echelon;
-
-                        MassiveNumber UpgradeIncome = new MassiveNumber();
-                        UpgradeIncome.value = agentCount[i].Mult(upgraIncomeMult[i] + 1, 1);
-                        UpgradeIncome.UpdateEchelon();
-
-                        calcNumber2.value = UpgradeIncome.Div(upgraPrice[i].value, upgraPrice[i].echelon);
-                        calcNumber2.UpdateEchelon();
-
-                        // If this is the shortest time to break even.
-                        if (!calcNumber2.IsGreaterThan(tempNumber))
+                        if (upgraCount[i].value < 3)
                         {
-                            returnRow = i;
-                            optimalIsAgent = false;         // Side effect.
-                            tempNumber.value = calcNumber2.value;
-                            tempNumber.echelon = calcNumber2.echelon;
+                            // Divide each Upgrade's price by its immediate income rate.
+                            MassiveNumber calcNumber2 = new MassiveNumber();
+                            calcNumber2.value = upgraPrice[i].value;
+                            calcNumber2.echelon = upgraPrice[i].echelon;
+
+                            MassiveNumber UpgradeIncome = new MassiveNumber();
+                            UpgradeIncome.value = agentCount[i].Mult(upgraIncomeMult[i] + 1, 1);
+                            UpgradeIncome.UpdateEchelon();
+
+                            calcNumber2.value = UpgradeIncome.Div(upgraPrice[i].value, upgraPrice[i].echelon);
+                            calcNumber2.UpdateEchelon();
+
+                            // If this is the shortest time to break even.
+                            if (!calcNumber2.IsGreaterThan(tempNumber))
+                            {
+                                returnRow = i;
+                                optimalIsAgent = false;         // Side effect.
+                                tempNumber.value = calcNumber2.value;
+                                tempNumber.echelon = calcNumber2.echelon;
+                            }
                         }
                     }
                 }
